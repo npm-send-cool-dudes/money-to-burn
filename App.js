@@ -10,6 +10,8 @@ import 'firebase/auth';
 import 'firebase/functions';
 import 'firebase/database';
 
+import { useObjectVal } from 'react-firebase-hooks/database';
+
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
   apiKey: 'AIzaSyDzCCPQjPzALATf_YOCXSpporWLGPX6OgA',
@@ -25,24 +27,18 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-var database = firebase.database();
+var ref = firebase.database().ref();
 
 export default function App() {
-  var ref = firebase.database().ref();
-
-  ref.on(
-    'value',
-    function (snapshot) {
-      console.log(snapshot.val());
-    },
-    function (error) {
-      console.log('Error: ' + error.code);
-    }
-  );
-
+  const [value, loading, error] = useObjectVal(ref);
+  console.log('value', value);
   return (
     <View style={styles.container}>
-      <Text>npm send cool dudes!!</Text>
+      {loading && <Text>Loading</Text>}
+      {value && <Text>{JSON.stringify(value)}</Text>}
+      {/* for not existing */}
+      {value === null && <Text>DNE</Text>}
+      {error && <Text>error</Text>}
     </View>
   );
 }
