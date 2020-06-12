@@ -2,6 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, Button } from 'react-native';
 import { db } from '../App';
 
+// var user = db.auth().currentUser;
+
+// if (user) {
+//   // User is signed in.
+//   console.log('logged', user);
+// } else {
+//   // No user is signed in.
+// }
+
 export default function HomeScreen({ navigation }) {
   const [count, setCount] = useState(0);
   // console.log('db', db.ref('/GamesList/clikBait'));
@@ -9,8 +18,9 @@ export default function HomeScreen({ navigation }) {
   function buttonPress() {
     setCount(count + 1);
     //update database
-    db.ref('/GamesList/clikBait/').update({ 1: count });
+    db.database().ref('/GamesList/clikBait/').update({ 1: count });
   }
+  console.log('home', db.auth().currentUser);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

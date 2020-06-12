@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 
 // Add the Firebase services that you want to use
 import 'firebase/auth';
@@ -34,7 +34,7 @@ firebase.initializeApp(firebaseConfig);
 
 var ref = firebase.database().ref();
 
-export const db = firebase.database();
+export const db = firebase;
 
 firebase
   .auth()
@@ -46,11 +46,12 @@ firebase
     // ...
   });
 
+let uid;
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     // User is signed in.
     var isAnonymous = user.isAnonymous;
-    var uid = user.uid;
+    uid = user.uid;
     console.log('user', uid);
     // ...
   } else {
