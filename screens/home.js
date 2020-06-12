@@ -2,15 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { db } from '../App';
 
-// var user = db.auth().currentUser;
-
-// if (user) {
-//   // User is signed in.
-//   console.log('logged', user);
-// } else {
-//   // No user is signed in.
-// }
-
 export default function HomeScreen({ navigation }) {
   useEffect(() => db.database().ref('/GamesList/clikBait/').set({ 0: 0 }), []);
 
@@ -22,7 +13,7 @@ export default function HomeScreen({ navigation }) {
       // User is signed in.
       var isAnonymous = user.isAnonymous;
       uid = user.uid;
-      console.log('user', uid);
+      // console.log('user', uid);
       // ...
     } else {
       // User is signed out.
@@ -33,7 +24,6 @@ export default function HomeScreen({ navigation }) {
 
   const listener = db.database().ref('/GamesList/clikBait/');
   listener.on('value', function (snap) {
-    console.log('test', snap.val()[uid]);
     if (snap.val()[uid] >= 10) {
       console.log(uid, 'won!!!!');
       setWinner(uid);
