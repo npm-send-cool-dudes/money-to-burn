@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
-
+import Homepage from './components/homepage';
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
@@ -30,34 +30,32 @@ firebase.initializeApp(firebaseConfig);
 
 var ref = firebase.database().ref();
 
-
-
 export default function App() {
   const [value, loading, error] = useObjectVal(ref);
   const [count, setCount] = useState(0);
-  console.log('value', value);
 
-  useEffect(()=>  {
+  useEffect(() => {
     var countfire = firebase.database().ref();
-    countfire.update({thisisavalue: 'boobies'});
-  },[]);
+    countfire.update({ thisisavalue: 'boobies' });
+  }, []);
 
   async function buttonPress() {
-  await setCount(count+1);
-  //update database
-  var countfire = firebase.database().ref();
-  countfire.update({thisisavalue: count});
+    await setCount(count + 1);
+    //update database
+    var countfire = firebase.database().ref();
+    countfire.update({ thisisavalue: count });
   }
 
   return (
-    <View style={styles.container}>
-      {loading && <Text>Loading</Text>}
-      {value && <Text>{JSON.stringify(value) + count}</Text>}
-      {/* for not existing */}
-      {value === null && <Text>DNE</Text>}
-      {error && <Text>error</Text>}
-      <Button onPress={buttonPress} title ="push me" color='red'/>
-    </View>
+    <Homepage />
+    // <View style={styles.container}>
+    //   {loading && <Text>Loading</Text>}
+    //   {value && <Text>{JSON.stringify(value) + count}</Text>}
+    //   {/* for not existing */}
+    //   {value === null && <Text>DNE</Text>}
+    //   {error && <Text>error</Text>}
+    //   <Button onPress={buttonPress} title="push me" color="red" />
+    // </View>
   );
 }
 
