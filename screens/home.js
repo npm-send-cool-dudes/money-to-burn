@@ -12,6 +12,8 @@ import { db } from '../App';
 // }
 
 export default function HomeScreen({ navigation }) {
+  useEffect(() => db.database().ref('/GamesList/clikBait/').set({ 0: 0 }), []);
+
   const [count, setCount] = useState(0);
   const [winner, setWinner] = useState();
   let uid;
