@@ -5,9 +5,9 @@ import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-function button() {
+function button(roomName) {
   db.database()
-    .ref('/Rooms/ABCD/playerList/')
+    .ref(`/Rooms/${roomName}/playerList/`)
     .update({ '1': { status: 'waiting' } });
 }
 
@@ -18,16 +18,20 @@ const QRcode = {
   height: 200,
 };
 
-export default function WaitingRoom({ navigation }) {
+export default function WaitingRoom(props) {
+  console.log(props);
+  let navigation = props.navigation;
+  let roomName = props.route.params.name;
+
   const [user, loading, error] = useAuthState(db.auth());
   let uid = user.uid;
 
-  let playerList = db.database().ref('/Rooms/ABCD/playerList/');
+  let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
 
   useEffect(() => {
     db.database()
-      .ref(`/Rooms/ABCD/playerList/${uid}`)
+      .ref(`/Rooms/${roomName}/playerList/${uid}`)
       .update({ uid: uid, status: 'waiting' });
   });
 
@@ -40,7 +44,7 @@ export default function WaitingRoom({ navigation }) {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {uid && <Text> {uid} </Text>}
       <Image source={QRcode} style={styles.logo} />
-      <Text>ROOM ABCD</Text>
+      <Text>ROOM ${roomName}</Text>
       {loading && <Text> loading players... </Text>}
       {players &&
         players.map((player) => (
@@ -50,7 +54,7 @@ export default function WaitingRoom({ navigation }) {
             status={player.status}
           />
         ))}
-      <Button title="update status" onPress={button} />
+      <Button title="update status" onPress={() => button(roomName)} />
     </View>
   );
 }

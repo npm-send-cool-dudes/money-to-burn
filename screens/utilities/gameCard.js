@@ -73,7 +73,11 @@ export default function GameCard(props) {
             title="Play Now"
             titleStyle={styles.buttonText}
             buttonStyle={styles.playNow}
-            onPress={() => props.nav.navigate('WaitingRoom')}
+            onPress={() =>
+              props.nav.navigate('WaitingRoom', {
+                name: Math.floor(Math.random() * 10000),
+              })
+            }
           />
           <Button
             title="Select"

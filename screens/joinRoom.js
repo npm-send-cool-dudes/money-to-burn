@@ -17,13 +17,13 @@ export default function JoinRoom({ navigation }) {
   const [roomName, setRoomName] = useState('');
 
   function join() {
-    navigation.navigate('WaitingRoom');
+    navigation.navigate('WaitingRoom', { name: roomName });
   }
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TextInput
-        onChangedText={(text) => setRoomName(text)}
+        onChangeText={(text) => setRoomName(text)}
         placeholder="enter room"
       />
       <Button title="join" onPress={() => join(navigation)} />
