@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Image } from 'react-native';
 import { db } from '../App';
 import PlayerStatus from './utilities/playerStatus';
-import { useListVals } from 'react-firebase-hooks/database';
+import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 function button() {
@@ -20,31 +20,16 @@ const QRcode = {
 
 export default function WaitingRoom({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
-  console.log('usersss wiatingorom ', user.uid);
   let uid = user.uid;
-  // let uid;
-  // db.auth().onAuthStateChanged(function (user) {
-  //   if (user) {
-  //     // User is signed in.
-  //     var isAnonymous = user.isAnonymous;
-  //     uid = user.uid;
-  //     console.log('user', uid);
-  //     // ...
-  //   } else {
-  //     // User is signed out.
-  //     // ...
-  //   }
-  //   // ...
-  // });
 
   let playerList = db.database().ref('/Rooms/ABCD/playerList/');
   const [players] = useListVals(playerList);
 
   useEffect(() => {
     db.database()
-      .ref('/Rooms/ABCD/playerList/')
-      .push({ uid: uid, status: 'waiting' });
-  }, []);
+      .ref(`/Rooms/ABCD/playerList/${uid}`)
+      .update({ uid: uid, status: 'waiting' });
+  });
 
   console.log('players untouched', players);
   console.log('players values', players && Object.values(players));

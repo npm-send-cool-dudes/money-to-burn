@@ -56,7 +56,7 @@ firebase.auth().onAuthStateChanged(function (user) {
     // User is signed in.
     var isAnonymous = user.isAnonymous;
     uid = user.uid;
-    console.log('user', uid);
+    // console.log('user', uid);
     // ...
   } else {
     // User is signed out.
