@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, Image, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Image,
+  TextInput,
+  Alert,
+  SnapshotViewIOS,
+  SnapshotViewIOSComponent,
+} from 'react-native';
 import { db } from '../App';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
@@ -15,9 +25,15 @@ const QRcode = {
 export default function JoinRoom({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
   const [roomName, setRoomName] = useState('');
+  let [roomList] = useObjectVal(db.database().ref(`/Rooms/`));
 
   function join() {
-    navigation.navigate('WaitingRoom', { name: roomName });
+    console.log('roomlist', roomList);
+    if (!roomList[roomName]) {
+      Alert.alert('Room not found');
+    } else {
+      navigation.navigate('WaitingRoom', { name: roomName });
+    }
   }
 
   return (
@@ -26,7 +42,7 @@ export default function JoinRoom({ navigation }) {
         onChangeText={(text) => setRoomName(text)}
         placeholder="enter room"
       />
-      <Button title="join" onPress={() => join(navigation)} />
+      <Button title="join" onPress={() => join()} />
     </View>
   );
 }
