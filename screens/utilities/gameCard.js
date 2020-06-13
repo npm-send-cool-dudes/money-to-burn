@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button, Rating } from 'react-native-elements';
 // import { ScrollView } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
@@ -59,6 +59,14 @@ export default function GameCard({ navigation }, gameList) {
       <View style={styles.gameCardRight}>
         <Text style={styles.gameTitle}>ClikBait</Text>
         <Text style={styles.difficulty}> Difficulty</Text>
+        <Rating
+          type="custom"
+          ratingCount={5}
+          imageSize={20}
+          ratingBackgroundColor="#E5D9FF"
+          ratingColor="#FFA1A1"
+          readonly
+        />
         <View style={styles.buttonGroup}>
           <Button
             title="Play Now"
