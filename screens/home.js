@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.background}>
       <View style={styles.headerBox}>
@@ -45,16 +45,19 @@ export default function HomeScreen() {
           title="Create Game"
           titleStyle={styles.buttonText}
           buttonStyle={styles.play}
+          onPress={() => navigation.navigate('GameSelector')}
         />
         <Button
           title="Join Room"
           titleStyle={styles.buttonText}
           buttonStyle={styles.play}
+          onPress={() => navigation.navigate('WaitingRoom')}
         />
         <Button
           title="High Scores"
           titleStyle={styles.buttonText}
           buttonStyle={styles.highScores}
+          onPress={() => navigation.navigate('HighScores')}
         />
       </View>
     </View>

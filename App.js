@@ -5,6 +5,7 @@ import { ThemeProvider } from 'react-native-elements';
 
 import Home from './screens/home';
 import Login from './screens/login';
+import GameSelector from './screens/gameSelector';
 
 const Stack = createStackNavigator();
 
@@ -78,6 +79,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="GameSelector" component={GameSelector} />
           <Stack.Screen name="Login" component={Login} />
         </Stack.Navigator>
       </NavigationContainer>
