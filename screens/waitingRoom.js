@@ -25,15 +25,17 @@ export default function WaitingRoom(props) {
 
   const [user, loading, error] = useAuthState(db.auth());
   let uid = user.uid;
-
+  console.log('user', user);
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
 
   useEffect(() => {
-    db.database()
-      .ref(`/Rooms/${roomName}/playerList/${uid}`)
-      .update({ uid: uid, status: 'waiting' });
-  });
+    uid &&
+      db
+        .database()
+        .ref(`/Rooms/${roomName}/playerList/${uid}`)
+        .update({ uid: uid, status: 'waiting' });
+  }, [uid]);
 
   console.log('players untouched', players);
   console.log('players values', players && Object.values(players));
