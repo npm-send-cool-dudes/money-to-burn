@@ -25,9 +25,11 @@ const styles = StyleSheet.create({
   },
   play: {
     backgroundColor: '#e5d9ff',
+    margin: 5,
   },
   highScores: {
     backgroundColor: '#ffd9f4',
+    margin: 5,
   },
   buttonText: {
     color: 'black',
