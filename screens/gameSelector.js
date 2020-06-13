@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
 export default function GameSelector({ navigation }) {
   return (
     <ScrollView style={styles.background}>
-      <Text>GAME SELECTOR</Text>
       <GameCard />
       <GameCard />
       <GameCard />

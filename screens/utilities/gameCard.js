@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
   gameCardRight: {
     flex: 2,
-    justifyContent: 'flex-end',
+    padding: 10,
   },
   gameTitle: {
     fontSize: 20,
@@ -33,14 +33,16 @@ const styles = StyleSheet.create({
   playNow: {
     backgroundColor: '#FFA1A1',
     width: 100,
+    margin: 2,
   },
   select: {
     backgroundColor: '#B796FF',
     width: 100,
+    margin: 2,
   },
   logo: {
-    flex: 1,
     margin: 10,
+    marginRight: 40,
   },
 });
 
