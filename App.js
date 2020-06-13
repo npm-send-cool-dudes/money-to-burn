@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider } from 'react-native-elements';
+import { StyleSheet, Text, View, Button } from 'react-native';
 
 import Home from './screens/home';
 import Login from './screens/login';
@@ -9,6 +11,8 @@ import GameSelector from './screens/gameSelector';
 import ClikBait from './screens/clikBait';
 
 const Stack = createStackNavigator();
+
+
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
@@ -86,5 +90,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
+
   );
 }
