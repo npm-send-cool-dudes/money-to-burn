@@ -31,7 +31,6 @@ export default function ClikBait({ navigation }) {
   });
 
   function buttonPress() {
-    setCount(count + 1);
     //update database
     db.database()
       .ref('/GamesList/clikBait/')

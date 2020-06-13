@@ -2,49 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Image } from 'react-native';
 import { db } from '../App';
 import PlayerStatus from './utilities/playerStatus';
-import { useObjectVal } from 'react-firebase-hooks/database';
+import { useListVals } from 'react-firebase-hooks/database';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-
-function button(){
+function button() {
   db.database()
     .ref('/Rooms/ABCD/playerList/')
-    .update({ '1': {status: 'waiting'} });
+    .update({ '1': { status: 'waiting' } });
 }
 
-
 const QRcode = {
-  uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png',
+  uri:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png',
   width: 200,
   height: 200,
 };
 
 export default function WaitingRoom({ navigation }) {
-
-  let uid;
-  db.auth().onAuthStateChanged(function (user) {
-  if (user) {
-    // User is signed in.
-    var isAnonymous = user.isAnonymous;
-    uid = user.uid;
-    console.log('user', uid);
-    // ...
-  } else {
-    // User is signed out.
-    // ...
-  }
-  // ...
-});
+  const [user, loading, error] = useAuthState(db.auth());
+  console.log('usersss wiatingorom ', user.uid);
+  let uid = user.uid;
+  // let uid;
+  // db.auth().onAuthStateChanged(function (user) {
+  //   if (user) {
+  //     // User is signed in.
+  //     var isAnonymous = user.isAnonymous;
+  //     uid = user.uid;
+  //     console.log('user', uid);
+  //     // ...
+  //   } else {
+  //     // User is signed out.
+  //     // ...
+  //   }
+  //   // ...
+  // });
 
   let playerList = db.database().ref('/Rooms/ABCD/playerList/');
-  const [players, loading, error] = useObjectVal(playerList);
-  const user = 1;
-  useEffect(
-  ()=> {uid && db.database()
-  .ref(`/Rooms/ABCD/playerList/${user}`)
-  .update({uid: uid});
-  });
+  const [players] = useListVals(playerList);
 
-  players && players.splice(0,1);
+  useEffect(() => {
+    db.database()
+      .ref('/Rooms/ABCD/playerList/')
+      .push({ uid: uid, status: 'waiting' });
+  }, []);
+
+  console.log('players untouched', players);
+  console.log('players values', players && Object.values(players));
+  // console.log('keys', players && Object.keys(players));
   //const randoName = Math.floor(Math.random() * 10000);
 
   return (
@@ -53,12 +57,15 @@ export default function WaitingRoom({ navigation }) {
       <Image source={QRcode} style={styles.logo} />
       <Text>ROOM ABCD</Text>
       {loading && <Text> loading players... </Text>}
-      {players && players.map(player=> <PlayerStatus key={player.uid} name={player.uid} status={player.status} />)}
-      <Button
-        title="update status"
-        onPress={button}
-      />
-    
+      {players &&
+        players.map((player) => (
+          <PlayerStatus
+            key={player.uid}
+            name={player.uid}
+            status={player.status}
+          />
+        ))}
+      <Button title="update status" onPress={button} />
     </View>
   );
 }
