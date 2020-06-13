@@ -15,35 +15,17 @@ const QRcode = {
 export default function JoinRoom({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
   const [roomName, setRoomName] = useState('');
-  let uid = user.uid;
-
-  let playerList = db.database().ref('/Rooms/ABCD/playerList/');
-  const [players] = useListVals(playerList);
 
   function join() {
-    db.database()
-      .ref(`/Rooms/${roomName}/playerList/${uid}`)
-      .update({ uid: uid, status: 'waiting' });
     navigation.navigate('WaitingRoom');
   }
-
-  useEffect(() => {
-    db.database()
-      .ref(`/Rooms/ABCD/playerList/${uid}`)
-      .update({ uid: uid, status: 'waiting' });
-  });
-
-  console.log('players untouched', players);
-  console.log('players values', players && Object.values(players));
-  // console.log('keys', players && Object.keys(players));
-  //const randoName = Math.floor(Math.random() * 10000);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TextInput
         onChangedText={(text) => setRoomName(text)}
         placeholder="enter room"
-      ></TextInput>
+      />
       <Button title="join" onPress={() => join(navigation)} />
     </View>
   );
