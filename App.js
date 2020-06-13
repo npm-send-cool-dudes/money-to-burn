@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ThemeProvider, Button } from 'react-native-elements';
+import { ThemeProvider } from 'react-native-elements';
 
 import Home from './screens/home';
 import Login from './screens/login';
@@ -63,7 +63,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 });
 
 export default function App() {
-  const [value, loading, error] = useObjectVal(ref);
+  // const [value, loading, error] = useObjectVal(ref);
   const [count, setCount] = useState(0);
 
   async function buttonPress() {
@@ -75,7 +75,6 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <Button title="test" />
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Home} />
