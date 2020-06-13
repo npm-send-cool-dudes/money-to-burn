@@ -1,10 +1,22 @@
-import React, {useState, useEffect} from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { ThemeProvider } from 'react-native-elements';
 import { StyleSheet, Text, View, Button } from 'react-native';
+
+import Home from './screens/home';
+import Login from './screens/login';
+import GameSelector from './screens/gameSelector';
+import ClikBait from './screens/clikBait';
+
+const Stack = createStackNavigator();
+
 
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 
 // Add the Firebase services that you want to use
 import 'firebase/auth';
@@ -13,16 +25,15 @@ import 'firebase/database';
 
 import { useObjectVal } from 'react-firebase-hooks/database';
 
-// TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyDzCCPQjPzALATf_YOCXSpporWLGPX6OgA',
-  authDomain: 'money-to-burn.firebaseapp.com',
-  databaseURL: 'https://money-to-burn.firebaseio.com',
-  projectId: 'money-to-burn',
-  storageBucket: 'money-to-burn.appspot.com',
-  messagingSenderId: '259957476230',
-  appId: '1:259957476230:web:f7e68b8436ffd6bcbbba07',
-  measurementId: 'G-2JNBJLSCLD',
+  apiKey: 'AIzaSyDfYmbv82EH6KCzzwOhT3DK_7ufoXfWbXU',
+  authDomain: 'money-to-burn---ron-db.firebaseapp.com',
+  databaseURL: 'https://money-to-burn---ron-db.firebaseio.com',
+  projectId: 'money-to-burn---ron-db',
+  storageBucket: 'money-to-burn---ron-db.appspot.com',
+  messagingSenderId: '508239108257',
+  appId: '1:508239108257:web:13cf7398e1fe29a26cb8e0',
+  measurementId: 'G-V8FFSPWNVY',
 };
 
 // Initialize Firebase
@@ -30,42 +41,55 @@ firebase.initializeApp(firebaseConfig);
 
 var ref = firebase.database().ref();
 
+export const db = firebase;
 
+firebase
+  .auth()
+  .signInAnonymously()
+  .catch(function (error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // ...
+  });
+
+let uid;
+firebase.auth().onAuthStateChanged(function (user) {
+  if (user) {
+    // User is signed in.
+    var isAnonymous = user.isAnonymous;
+    uid = user.uid;
+    console.log('user', uid);
+    // ...
+  } else {
+    // User is signed out.
+    // ...
+  }
+  // ...
+});
 
 export default function App() {
-  const [value, loading, error] = useObjectVal(ref);
+  // const [value, loading, error] = useObjectVal(ref);
   const [count, setCount] = useState(0);
-  console.log('value', value);
-
-  useEffect(()=>  {
-    var countfire = firebase.database().ref();
-    countfire.update({thisisavalue: 'boobies'});
-  },[]);
 
   async function buttonPress() {
-  await setCount(count+1);
-  //update database
-  var countfire = firebase.database().ref();
-  countfire.update({thisisavalue: count});
+    await setCount(count + 1);
+    //update database
+    var countfire = firebase.database().ref();
+    countfire.update({ thisisavalue: count });
   }
 
   return (
-    <View style={styles.container}>
-      {loading && <Text>Loading</Text>}
-      {value && <Text>{JSON.stringify(value) + count}</Text>}
-      {/* for not existing */}
-      {value === null && <Text>DNE</Text>}
-      {error && <Text>error</Text>}
-      <Button onPress={buttonPress} title ="push me" color='red'/>
-    </View>
+    <ThemeProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="GameSelector" component={GameSelector} />
+          <Stack.Screen name="ClikBait" component={ClikBait} />
+          <Stack.Screen name="Login" component={Login} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
+
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
