@@ -1,52 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
-import { db } from '../App';
+import { View, Text, StyleSheet } from 'react-native';
+import { Button } from 'react-native-elements';
 
 export default function HomeScreen({ navigation }) {
-  useEffect(() => db.database().ref('/GamesList/clikBait/').set({ 0: 0 }), []);
-
-  const [count, setCount] = useState(0);
-  const [winner, setWinner] = useState();
-  let uid;
-  db.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      // User is signed in.
-      var isAnonymous = user.isAnonymous;
-      uid = user.uid;
-      // console.log('user', uid);
-      // ...
-    } else {
-      // User is signed out.
-      // ...
-    }
-    // ...
-  });
-
-  const listener = db.database().ref('/GamesList/clikBait/');
-  listener.on('value', function (snap) {
-    if (snap.val()[uid] >= 10) {
-      console.log(uid, 'won!!!!');
-      setWinner(uid);
-    }
-  });
-
-  function buttonPress() {
-    setCount(count + 1);
-    //update database
-    db.database()
-      .ref('/GamesList/clikBait/')
-      .update({ [uid]: count });
-  }
-
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Login"
-        onPress={() => navigation.navigate('Login')}
-      />
-      {!winner && <Button onPress={buttonPress} title="push me" color="red" />}
-      {winner && <Text>Winner is {winner}!!!!!!!!!!</Text>}
+    <View style={styles.background}>
+      <View style={styles.headerBox}>
+        <Text style={styles.header}>MONEY TO BURN</Text>
+      </View>
+      <View style={styles.buttonGroup}>
+        <Button
+          title="Create Game"
+          titleStyle={styles.buttonText}
+          buttonStyle={styles.play}
+        />
+        <Button
+          title="Join Room"
+          titleStyle={styles.buttonText}
+          buttonStyle={styles.play}
+        />
+        <Button
+          title="High Scores"
+          titleStyle={styles.buttonText}
+          buttonStyle={styles.highScores}
+        />
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E5FDFF',
+  },
+  header: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: 'black',
+    transform: [{ rotate: '-45deg' }],
+  },
+  headerBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 2,
+  },
+  buttonGroup: {
+    flex: 1,
+  },
+  play: {
+    backgroundColor: '#e5d9ff',
+    margin: '20px',
+  },
+  highScores: {
+    backgroundColor: '#ffd9f4',
+    margin: '20px',
+  },
+  buttonText: {
+    color: 'black',
+  },
+});

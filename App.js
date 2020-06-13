@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { ThemeProvider, Button } from 'react-native-elements';
 
 import Home from './screens/home';
 import Login from './screens/login';
@@ -73,11 +74,14 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Login" component={Login} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ThemeProvider>
+      <Button title="test" />
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Login" component={Login} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
