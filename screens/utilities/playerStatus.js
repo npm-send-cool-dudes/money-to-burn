@@ -49,7 +49,7 @@ export default function PlayerStatus(props) {
     <View style={styles.background}>
       <View style={styles.gameCardRight}>
         <Text style={styles.gameTitle}>{props.name}</Text>
-        <Text style={styles.difficulty}>{props.status}</Text>
+        <Text style={styles.gameTitle}>{props.status}</Text>
       </View>
     </View>
   );
