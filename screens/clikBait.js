@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { db } from '../App';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 export default function ClikBait({ navigation }) {
   useEffect(() => db.database().ref('/GamesList/clikBait/').set({ 0: 0 }), []);

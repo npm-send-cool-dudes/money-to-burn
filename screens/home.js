@@ -53,7 +53,7 @@ export default function HomeScreen({ navigation }) {
           title="Join Room"
           titleStyle={styles.buttonText}
           buttonStyle={styles.play}
-          onPress={() => navigation.navigate('WaitingRoom')}
+          onPress={() => navigation.navigate('JoinRoom')}
         />
         <Button
           title="High Scores"

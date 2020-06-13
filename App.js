@@ -9,6 +9,7 @@ import Login from './screens/login';
 import GameSelector from './screens/gameSelector';
 import ClikBait from './screens/clikBait';
 import WaitingRoom from './screens/waitingRoom';
+import JoinRoom from './screens/joinRoom';
 
 const Stack = createStackNavigator();
 
@@ -85,6 +86,7 @@ export default function App() {
           <Stack.Screen name="ClikBait" component={ClikBait} />
           <Stack.Screen name="WaitingRoom" component={WaitingRoom} />
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="JoinRoom" component={JoinRoom} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
