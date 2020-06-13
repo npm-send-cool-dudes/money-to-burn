@@ -52,7 +52,8 @@ const logo = {
   height: 64,
 };
 
-export default function GameCard({ navigation }, gameList) {
+export default function GameCard(props) {
+  console.log('props', props);
   return (
     <View style={styles.background}>
       <Image source={logo} style={styles.logo} />
@@ -72,6 +73,7 @@ export default function GameCard({ navigation }, gameList) {
             title="Play Now"
             titleStyle={styles.buttonText}
             buttonStyle={styles.playNow}
+            onPress={() => props.nav.navigate('ClikBait')}
           />
           <Button
             title="Select"

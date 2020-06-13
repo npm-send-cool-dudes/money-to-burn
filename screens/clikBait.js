@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { db } from '../App';
 
-export default function TestGame({ navigation }) {
+export default function ClikBait({ navigation }) {
   useEffect(() => db.database().ref('/GamesList/clikBait/').set({ 0: 0 }), []);
 
   const [count, setCount] = useState(0);
@@ -45,6 +45,7 @@ export default function TestGame({ navigation }) {
         title="Go to Login"
         onPress={() => navigation.navigate('Login')}
       />
+      <Text>{count}</Text>
       {!winner && <Button onPress={buttonPress} title="push me" color="red" />}
       {winner && <Text>Winner is {winner}!!!!!!!!!!</Text>}
     </View>

@@ -10,18 +10,21 @@ const styles = StyleSheet.create({
 });
 
 export default function GameSelector({ navigation }) {
+  console.log('nav', navigation);
   return (
     <ScrollView style={styles.background}>
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
+      <GameCard nav={navigation} />
     </ScrollView>
   );
 }
