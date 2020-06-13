@@ -31,6 +31,7 @@ export default function JoinRoom({ navigation }) {
     console.log('roomlist', roomList);
     if (!roomList[roomName]) {
       Alert.alert('Room not found');
+      console.log('Room not found');
     } else {
       navigation.navigate('WaitingRoom', { name: roomName });
     }
