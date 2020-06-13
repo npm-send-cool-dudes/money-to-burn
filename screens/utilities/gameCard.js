@@ -73,7 +73,7 @@ export default function GameCard(props) {
             title="Play Now"
             titleStyle={styles.buttonText}
             buttonStyle={styles.playNow}
-            onPress={() => props.nav.navigate('ClikBait')}
+            onPress={() => props.nav.navigate('WaitingRoom')}
           />
           <Button
             title="Select"
