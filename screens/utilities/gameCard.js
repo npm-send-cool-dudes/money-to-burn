@@ -63,7 +63,7 @@ export default function GameCard({ navigation }, gameList) {
           type="custom"
           ratingCount={5}
           imageSize={20}
-          ratingBackgroundColor="#E5D9FF"
+          ratingBackgroundColor="#BFA0A0"
           ratingColor="#FFA1A1"
           readonly
         />
