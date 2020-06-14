@@ -3,14 +3,13 @@ import { View, Text, Button } from 'react-native';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
-let gameWon = false;
 
 export default function ClikBait({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
   //TODO change this line once room DB hook for games is done
 
   useEffect(() => {
-    db.database().ref('/GamesList/clikBait/').set({ 0: 0 });
+    db.database().ref('/GamesList/clikBait/').set({ winner: '' });
     console.log('useEffect renders!');
   }, []);
 
@@ -21,10 +20,10 @@ export default function ClikBait({ navigation }) {
   const listener = db.database().ref('/GamesList/clikBait/');
   listener.on('value', function (snap) {
     //map over all users to pull scores
-    if (snap.val()[uid] == 10 && gameWon == false) {
+    if (snap.val()[uid] == 10 && !clikBaitPlayers.winner) {
       console.log(uid, 'won!!!!');
-      gameWon = true;
-      setWinner(uid);
+
+      db.database().ref('/GamesList/clikBait/').update({ winner: uid });
     }
   });
   const clikBaitPlayers = db.database().ref(`/GamesList/clikBait/`);
@@ -61,8 +60,12 @@ export default function ClikBait({ navigation }) {
         onPress={() => navigation.navigate('Login')}
       />
       <Text>{count}</Text>
-      {!winner && <Button onPress={buttonPress} title="push me" color="red" />}
-      {winner && <Text>Winner is {winner}!!!!!!!!!!</Text>}
+      {clikBaitPlayers.winner && (
+        <Button onPress={buttonPress} title="push me" color="red" />
+      )}
+      {clikBaitPlayers.winner && (
+        <Text>Winner is {clikBaitPlayers.winner}!!!!!!!!!!</Text>
+      )}
     </View>
   );
 }
