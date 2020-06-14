@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
+import {
+  useListVals,
+  useObjectVal,
+  useList,
+} from 'react-firebase-hooks/database';
 
 export default function ClikBait({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
@@ -10,7 +14,7 @@ export default function ClikBait({ navigation }) {
 
   useEffect(() => {
     db.database().ref('/GamesList/clikBait/').set({ winner: '' });
-    console.log('useEffect renders!');
+    // console.log('useEffect renders!');
   }, []);
 
   const [count, setCount] = useState(0);
@@ -29,9 +33,12 @@ export default function ClikBait({ navigation }) {
   const clikBaitPlayers = db.database().ref(`/GamesList/clikBait/`);
   const [players] = useObjectVal(clikBaitPlayers);
   console.log(players);
-  // players.forEach((player) => {
-  //   console.log(player);
-  // });
+  const [gamebois] = useList(clikBaitPlayers);
+  const activePlayers = gamebois.filter((single) => {
+    // console.log('single', single);
+    return single != 'winner';
+  });
+  // console.log('active players', activePlayers);
 
   function buttonPress() {
     //update database
@@ -48,19 +55,16 @@ export default function ClikBait({ navigation }) {
 */
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{}}>
-        {'player1'}
-        {'player1'}
-        {'player1'}
-        {'player1'}
-      </Text>
+      {/* {Object.keys(clikBaitPlayer).map((key) =>
+        key !== 'winner' ? key[uid] : null
+      )} */}
       <Text>Home Screen</Text>
       <Button
         title="Go to Login"
         onPress={() => navigation.navigate('Login')}
       />
       <Text>{count}</Text>
-      {clikBaitPlayers.winner && (
+      {!clikBaitPlayers.winner && (
         <Button onPress={buttonPress} title="push me" color="red" />
       )}
       {clikBaitPlayers.winner && (
