@@ -11,46 +11,30 @@ import {
 export default function ClikBait({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
   //TODO change this line once room DB hook for games is done
+  let uid = user.uid;
 
   useEffect(() => {
-    db.database().ref('/GamesList/clikBait/').set({ winner: '' });
-    // console.log('useEffect renders!');
+    db.database()
+      .ref('/GamesList/clikBait/')
+      .set({ [uid]: 0 });
   }, []);
 
-  const [count, setCount] = useState(0);
-  const [winner, setWinner] = useState();
-  let uid = user.uid;
-  //listen for whole player object
-  const listener = db.database().ref('/GamesList/clikBait/');
+  const [allScores] = useListVals(db.database().ref(`/GamesList/clikBait/`));
 
-  listener.on('value', function (snap) {
-    //map over all users to pull scores
-    if (snap.val()[uid] == 10 && clikBaitPlayers.winner) {
-      console.log(uid, 'won!!!!');
+  console.log('all', allScores);
 
-      db.database().ref('/GamesList/clikBait/').update({ winner: uid });
-    }
-  });
-  const clikBaitPlayers = db.database().ref(`/GamesList/clikBait/`);
-  const [players] = useObjectVal(clikBaitPlayers);
-  // useEffect(() => {
-  //   Object.values(players);
-  // }, [players]);
+  const [personalScore] = useObjectVal(
+    db.database().ref(`/GamesList/clikBait/${uid}`)
+  );
 
-  console.log(players);
-  const [currentPlayers] = useList(clikBaitPlayers);
-  const activePlayers = currentPlayers.filter((single) => {
-    // console.log('single', single);
-    return single != 'winner';
-  });
-  // console.log('active players', activePlayers);
+  console.log('personalScore', personalScore);
 
   function buttonPress() {
     //update database
-    setCount(count + 1);
+
     db.database()
-      .ref('/GamesList/clikBait/')
-      .update({ [uid]: count });
+      .ref(`/GamesList/clikBait/`)
+      .update({ [uid]: personalScore + 1 });
   }
   /*need
   userNames
@@ -68,7 +52,10 @@ export default function ClikBait({ navigation }) {
         title="Go to Login"
         onPress={() => navigation.navigate('Login')}
       />
-      <Text>{count}</Text>
+      <Text>
+        {uid}
+        personal Score{personalScore}
+      </Text>
       {!clikBaitPlayers.winner && (
         <Button onPress={buttonPress} title="push me" color="red" />
       )}
