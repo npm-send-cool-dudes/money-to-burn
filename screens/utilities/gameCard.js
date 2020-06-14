@@ -1,7 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button, Rating } from 'react-native-elements';
-// import { ScrollView } from 'react-native-gesture-handler';
+
+const logo = {
+  uri: 'https://reactnative.dev/img/tiny_logo.png',
+  width: 64,
+  height: 64,
+};
+
+export default function GameCard(props) {
+  return (
+    <View style={styles.background}>
+      <Image source={logo} style={styles.logo} />
+      <View style={styles.gameCardRight}>
+        <Text style={styles.gameTitle}>ClikBait</Text>
+        <Text style={styles.difficulty}> Difficulty</Text>
+        <Rating
+          type="custom"
+          ratingCount={5}
+          imageSize={20}
+          ratingBackgroundColor="#BFA0A0"
+          ratingColor="#FFA1A1"
+          readonly
+        />
+        <View style={styles.buttonGroup}>
+          <Button
+            title="Play Now"
+            titleStyle={styles.buttonText}
+            buttonStyle={styles.playNow}
+            onPress={() =>
+              props.nav.navigate('WaitingRoom', {
+                name: Math.floor(Math.random() * 10000),
+              })
+            }
+          />
+          <Button
+            title="Select"
+            titleStyle={styles.buttonText}
+            buttonStyle={styles.select}
+          />
+        </View>
+      </View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   background: {
@@ -45,43 +87,3 @@ const styles = StyleSheet.create({
     marginRight: 40,
   },
 });
-
-const logo = {
-  uri: 'https://reactnative.dev/img/tiny_logo.png',
-  width: 64,
-  height: 64,
-};
-
-export default function GameCard(props) {
-  console.log('props', props);
-  return (
-    <View style={styles.background}>
-      <Image source={logo} style={styles.logo} />
-      <View style={styles.gameCardRight}>
-        <Text style={styles.gameTitle}>ClikBait</Text>
-        <Text style={styles.difficulty}> Difficulty</Text>
-        <Rating
-          type="custom"
-          ratingCount={5}
-          imageSize={20}
-          ratingBackgroundColor="#BFA0A0"
-          ratingColor="#FFA1A1"
-          readonly
-        />
-        <View style={styles.buttonGroup}>
-          <Button
-            title="Play Now"
-            titleStyle={styles.buttonText}
-            buttonStyle={styles.playNow}
-            onPress={() => props.nav.navigate('ClikBait')}
-          />
-          <Button
-            title="Select"
-            titleStyle={styles.buttonText}
-            buttonStyle={styles.select}
-          />
-        </View>
-      </View>
-    </View>
-  );
-}
