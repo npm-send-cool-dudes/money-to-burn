@@ -17,7 +17,7 @@ export default function ClikBait({ navigation }) {
   useEffect(() => {
     db.database()
       .ref('/GamesList/clikBait/')
-      .set({ [uid]: 0 });
+      .update({ [uid]: 0 });
   }, []);
 
   const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
