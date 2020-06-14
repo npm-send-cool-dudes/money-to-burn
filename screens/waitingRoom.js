@@ -4,7 +4,6 @@ import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import ClikBait from './clikBait';
 
 const QRcode = {
   uri:
@@ -36,16 +35,17 @@ export default function WaitingRoom(props) {
       })
       .includes(true);
     setReadyToPlay(!ready);
-    // if (ready && players) {
-    //   console.log('ready', ready);
-    //   navToClikBait();
-    // }
   }, [players]);
+
   const navToClikBait = () => {
-    navigation.navigate('ClikBait');
+    db.database().ref(`/Rooms/${roomName}/`).update({ status: true });
   };
   // console.log('status', status);
-
+  const listener = db.database().ref(`/Rooms/${roomName}/status`);
+  listener.on('value', function (snap) {
+    console.log('test', snap.val());
+    if (snap.val()) navigation.navigate('ClikBait');
+  });
   useEffect(() => {
     uid &&
       db
