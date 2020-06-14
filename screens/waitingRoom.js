@@ -4,6 +4,7 @@ import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import ClikBait from './clikBait';
 
 const QRcode = {
   uri:
@@ -27,16 +28,23 @@ export default function WaitingRoom(props) {
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
 
+  //TODO add ready status to firebase
   useEffect(() => {
-    let filterVal = players
+    let ready = players
       .map((player) => {
-        return player.status;
+        return !player.status;
       })
-      .includes(false);
-    setReadyToPlay(filterVal);
+      .includes(true);
+    setReadyToPlay(!ready);
+    // if (ready && players) {
+    //   console.log('ready', ready);
+    //   navToClikBait();
+    // }
   }, [players]);
-
-  console.log('status', status);
+  const navToClikBait = () => {
+    navigation.navigate('ClikBait');
+  };
+  // console.log('status', status);
 
   useEffect(() => {
     uid &&
@@ -52,12 +60,14 @@ export default function WaitingRoom(props) {
       .update({ status: !status });
   }
 
-  console.log('waiting room props', props);
+  // console.log('waiting room props', props);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {uid && <Text> {uid} </Text>}
-      <Text>{!readyToPlay ? 'ready' : 'Go away'}</Text>
+      {readyToPlay && (
+        <Button onPress={navToClikBait} title="READY!!!!!!!!!!!!!!!"></Button>
+      )}
       <Image source={QRcode} style={styles.logo} />
       <Text>ROOM ${roomName}</Text>
       {loading && <Text> loading players... </Text>}
@@ -69,6 +79,7 @@ export default function WaitingRoom(props) {
             status={player.status ? 'Ready' : 'Waiting'}
           />
         ))}
+
       <Button title="Ready!" onPress={() => button(roomName, uid)} />
     </View>
   );
