@@ -22,6 +22,19 @@ export default function WaitingRoom(props) {
     .database()
     .ref(`/Rooms/${roomName}/playerList/${uid}/status`);
   const [status] = useObjectVal(playerStatus);
+  const [readyToPlay, setReadyToPlay] = useState(false);
+
+  let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
+  const [players] = useListVals(playerList);
+
+  useEffect(() => {
+    let filterVal = players
+      .map((player) => {
+        return player.status;
+      })
+      .includes(false);
+    setReadyToPlay(filterVal);
+  }, [players]);
 
   console.log('status', status);
 
@@ -41,12 +54,10 @@ export default function WaitingRoom(props) {
 
   console.log('waiting room props', props);
 
-  let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
-  const [players] = useListVals(playerList);
-
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {uid && <Text> {uid} </Text>}
+      <Text>{!readyToPlay ? 'ready' : 'Go away'}</Text>
       <Image source={QRcode} style={styles.logo} />
       <Text>ROOM ${roomName}</Text>
       {loading && <Text> loading players... </Text>}
