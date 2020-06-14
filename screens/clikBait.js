@@ -22,9 +22,10 @@ export default function ClikBait({ navigation }) {
   let uid = user.uid;
   //listen for whole player object
   const listener = db.database().ref('/GamesList/clikBait/');
+
   listener.on('value', function (snap) {
     //map over all users to pull scores
-    if (snap.val()[uid] == 10 && !clikBaitPlayers.winner) {
+    if (snap.val()[uid] == 10 && clikBaitPlayers.winner) {
       console.log(uid, 'won!!!!');
 
       db.database().ref('/GamesList/clikBait/').update({ winner: uid });
@@ -32,9 +33,13 @@ export default function ClikBait({ navigation }) {
   });
   const clikBaitPlayers = db.database().ref(`/GamesList/clikBait/`);
   const [players] = useObjectVal(clikBaitPlayers);
+  // useEffect(() => {
+  //   Object.values(players);
+  // }, [players]);
+
   console.log(players);
-  const [gamebois] = useList(clikBaitPlayers);
-  const activePlayers = gamebois.filter((single) => {
+  const [currentPlayers] = useList(clikBaitPlayers);
+  const activePlayers = currentPlayers.filter((single) => {
     // console.log('single', single);
     return single != 'winner';
   });
