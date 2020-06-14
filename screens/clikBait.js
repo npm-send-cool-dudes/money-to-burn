@@ -9,6 +9,8 @@ import {
   useObject,
 } from 'react-firebase-hooks/database';
 
+let scoreDisplay = [[1, 1]];
+
 export default function ClikBait({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
   //TODO change this line once room DB hook for games is done
@@ -22,13 +24,13 @@ export default function ClikBait({ navigation }) {
 
   const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
 
-  console.log('all', allScores);
+  useEffect(() => {
+    scoreDisplay = allScores ? Object.entries(allScores) : [];
+  }, [allScores]);
 
   const [personalScore] = useObjectVal(
     db.database().ref(`/GamesList/clikBait/${uid}`)
   );
-
-  console.log('personalScore', personalScore);
 
   function buttonPress() {
     //update database
@@ -43,6 +45,7 @@ export default function ClikBait({ navigation }) {
   targetScore (win condition)
 
 */
+  console.log('scoredisplay', scoreDisplay);
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {/* {Object.keys(clikBaitPlayer).map((key) =>
@@ -53,10 +56,11 @@ export default function ClikBait({ navigation }) {
         title="Go to Login"
         onPress={() => navigation.navigate('Login')}
       />
-      <Text>
-        {uid}
-        personal Score{personalScore}
-      </Text>
+      {scoreDisplay.map(([player, score]) => (
+        <Text key={player}>
+          {player} {score}
+        </Text>
+      ))}
 
       <Button onPress={buttonPress} title="push me" color="red" />
 
