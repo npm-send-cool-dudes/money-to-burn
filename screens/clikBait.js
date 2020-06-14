@@ -6,6 +6,7 @@ import {
   useListVals,
   useObjectVal,
   useList,
+  useObject,
 } from 'react-firebase-hooks/database';
 
 export default function ClikBait({ navigation }) {
@@ -19,7 +20,7 @@ export default function ClikBait({ navigation }) {
       .set({ [uid]: 0 });
   }, []);
 
-  const [allScores] = useListVals(db.database().ref(`/GamesList/clikBait/`));
+  const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
 
   console.log('all', allScores);
 
@@ -56,12 +57,10 @@ export default function ClikBait({ navigation }) {
         {uid}
         personal Score{personalScore}
       </Text>
-      {!clikBaitPlayers.winner && (
-        <Button onPress={buttonPress} title="push me" color="red" />
-      )}
-      {clikBaitPlayers.winner && (
-        <Text>Winner is {clikBaitPlayers.winner}!!!!!!!!!!</Text>
-      )}
+
+      <Button onPress={buttonPress} title="push me" color="red" />
+
+      <Text>Winner is!!!!!!!!!!</Text>
     </View>
   );
 }
