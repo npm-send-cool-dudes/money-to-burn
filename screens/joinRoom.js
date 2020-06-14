@@ -1,16 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Image,
-  TextInput,
-  Alert,
-  SnapshotViewIOS,
-  SnapshotViewIOSComponent,
-} from 'react-native';
-import { db } from '../App';
+import React, { useState } from 'react';
+import { View, Button, StyleSheet, TextInput, Alert } from 'react-native';
+import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';

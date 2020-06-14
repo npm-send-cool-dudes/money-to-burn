@@ -1,27 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
-import { db } from '../App';
+import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 export default function ClikBait({ navigation }) {
+  const [user, loading, error] = useAuthState(db.auth());
+
   useEffect(() => db.database().ref('/GamesList/clikBait/').set({ 0: 0 }), []);
 
   const [count, setCount] = useState(0);
   const [winner, setWinner] = useState();
-  let uid;
-  db.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      // User is signed in.
-      var isAnonymous = user.isAnonymous;
-      uid = user.uid;
-      // console.log('user', uid);
-      // ...
-    } else {
-      // User is signed out.
-      // ...
-    }
-    // ...
-  });
+  let uid = user.uid;
 
   const listener = db.database().ref('/GamesList/clikBait/');
   listener.on('value', function (snap) {

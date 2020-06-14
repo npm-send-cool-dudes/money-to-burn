@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import GameCard from './utilities/gameCard';
 
 const styles = StyleSheet.create({
@@ -10,7 +10,6 @@ const styles = StyleSheet.create({
 });
 
 export default function GameSelector({ navigation }) {
-  console.log('nav', navigation);
   return (
     <ScrollView style={styles.background}>
       <GameCard nav={navigation} />

@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Image } from 'react-native';
-import { db } from '../App';
+import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
-
-function button(roomName) {
-  db.database()
-    .ref(`/Rooms/${roomName}/playerList/`)
-    .update({ '1': { status: 'waiting' } });
-}
 
 const QRcode = {
   uri:
@@ -19,28 +13,36 @@ const QRcode = {
 };
 
 export default function WaitingRoom(props) {
-  console.log(props);
+  const [user, loading, error] = useAuthState(db.auth());
+  let uid = user.uid;
   let navigation = props.navigation;
   let roomName = props.route.params.name;
 
-  const [user, loading, error] = useAuthState(db.auth());
-  let uid = user.uid;
-  console.log('user', user);
-  let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
-  const [players] = useListVals(playerList);
+  let playerStatus = db
+    .database()
+    .ref(`/Rooms/${roomName}/playerList/${uid}/status`);
+  const [status] = useObjectVal(playerStatus);
+
+  console.log('status', status);
 
   useEffect(() => {
     uid &&
       db
         .database()
         .ref(`/Rooms/${roomName}/playerList/${uid}`)
-        .update({ uid: uid, status: 'waiting' });
+        .update({ uid: uid, status: false });
   }, [uid]);
 
-  console.log('players untouched', players);
-  console.log('players values', players && Object.values(players));
-  // console.log('keys', players && Object.keys(players));
-  //const randoName = Math.floor(Math.random() * 10000);
+  function button() {
+    db.database()
+      .ref(`/Rooms/${roomName}/playerList/${uid}/`)
+      .update({ status: !status });
+  }
+
+  console.log('waiting room props', props);
+
+  let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
+  const [players] = useListVals(playerList);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -53,10 +55,10 @@ export default function WaitingRoom(props) {
           <PlayerStatus
             key={player.uid}
             name={player.uid}
-            status={player.status}
+            status={player.status ? 'Ready' : 'Waiting'}
           />
         ))}
-      <Button title="update status" onPress={() => button(roomName)} />
+      <Button title="Ready!" onPress={() => button(roomName, uid)} />
     </View>
   );
 }
