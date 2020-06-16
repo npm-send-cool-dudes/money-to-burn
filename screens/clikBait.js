@@ -53,6 +53,14 @@ export default function ClikBait({ navigation }) {
         title="Go to Login"
         onPress={() => navigation.navigate('Login')}
       />
+      {allScores &&
+        Object.keys(allScores).map((userKey) => {
+          return (
+            <Text key={userKey}>
+              {userKey} Score: {allScores[userKey]}
+            </Text>
+          );
+        })}
       <Text>
         {uid}
         personal Score{personalScore}
