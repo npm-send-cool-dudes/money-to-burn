@@ -22,30 +22,23 @@ export default function WaitingRoom(props) {
   let playerStatus = db
     .database()
     .ref(`/Rooms/${roomName}/playerList/${uid}/status`);
+
   const [status] = useObjectVal(playerStatus);
-  const [readyToPlay, setReadyToPlay] = useState(false);
 
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
 
-  useEffect(() => {
-    let ready = players
-      .map((player) => {
-        return !player.status;
-      })
-      .includes(true);
-    setReadyToPlay(!ready);
-  }, [players]);
+  const ready = players
+    .map((player) => {
+      return !player.status;
+    })
+    .includes(true);
 
-  const navToClikBait = () => {
-    db.database().ref(`/Rooms/${roomName}/`).update({ status: true });
-  };
-
-  const listener = db.database().ref(`/Rooms/${roomName}/status`);
-  listener.on('value', function (snap) {
-    console.log('test', snap.val());
-    if (snap.val()) navigation.navigate('ClikBait');
-  });
+  // const listener = db.database().ref(`/Rooms/${roomName}/status`);
+  // listener.on('value', function (snap) {
+  //   console.log('test', snap.val());
+  //   if (snap.val()) navigation.navigate('ClikBait');
+  // });
 
   useEffect(() => {
     uid &&
@@ -55,20 +48,20 @@ export default function WaitingRoom(props) {
         .update({ uid: uid, status: false });
   }, [uid]);
 
-  function button() {
+  function playerReady() {
     db.database()
       .ref(`/Rooms/${roomName}/playerList/${uid}/`)
       .update({ status: !status });
   }
 
-  // console.log('waiting room props', props);
+  const navToGame = () => {
+    db.database().ref(`/Rooms/${roomName}/`).update({ status: true });
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {uid && <Text> {uid} </Text>}
-      {readyToPlay && (
-        <Button onPress={navToClikBait} title="READY!!!!!!!!!!!!!!!"></Button>
-      )}
+      {ready && <Button onPress={navToGame} title="READY!!!!!!!!!!!!!!!" />}
       <Image source={QRcode} style={styles.logo} />
       <Text>ROOM ${roomName}</Text>
       {loading && <Text> loading players... </Text>}
@@ -81,7 +74,7 @@ export default function WaitingRoom(props) {
           />
         ))}
 
-      <Button title="Ready!" onPress={() => button(roomName, uid)} />
+      <Button title="Ready!" onPress={() => playerReady(roomName, uid)} />
     </View>
   );
 }
