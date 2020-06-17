@@ -9,6 +9,8 @@ import {
   useObject,
 } from 'react-firebase-hooks/database';
 
+let winner = false;
+
 export default function ClikBait({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
   //TODO change this line once room DB hook for games is done
@@ -22,26 +24,23 @@ export default function ClikBait({ navigation }) {
 
   const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
 
+  //TODO look into refactoring, maybe remove useEffect
+  //TODO clean up game object when done
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey] >= 10) {
-          Alert.alert(`${userKey} is the winner!`);
-          //this whole thing can actually be a function we make that
+        if (allScores[userKey] >= 9) {
+          winner = userKey;
         }
       });
   }, [allScores]);
-  console.log('all', allScores);
 
   const [personalScore] = useObjectVal(
     db.database().ref(`/GamesList/clikBait/${uid}`)
   );
 
-  console.log('personalScore', personalScore);
-
   function buttonPress() {
     //update database
-
     db.database()
       .ref(`/GamesList/clikBait/`)
       .update({ [uid]: personalScore + 1 });
@@ -57,26 +56,31 @@ export default function ClikBait({ navigation }) {
       {/* {Object.keys(clikBaitPlayer).map((key) =>
         key !== 'winner' ? key[uid] : null
       )} */}
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Login"
-        onPress={() => navigation.navigate('Login')}
-      />
-      {allScores &&
-        Object.keys(allScores).map((userKey) => {
-          if (userKey !== uid) {
-            return (
-              <Text key={userKey}>
-                {userKey} Score: {allScores[userKey]}
-              </Text>
-            );
-          }
-        })}
-      <Text>Personal Score: {personalScore}</Text>
+      {!winner && (
+        <View>
+          {allScores &&
+            Object.keys(allScores).map((userKey) => {
+              if (userKey !== uid) {
+                return (
+                  <Text key={userKey}>
+                    {userKey} Score: {allScores[userKey]}
+                  </Text>
+                );
+              }
+            })}
+          <Text>Personal Score: {personalScore}</Text>
 
-      <Button onPress={buttonPress} title="push me" color="red" />
-
-      <Text>Winner is!!!!!!!!!!</Text>
+          <Button onPress={buttonPress} title="push me" color="red" />
+        </View>
+      )}
+      {winner && (
+        <View>
+          <Text>Winner is {winner}</Text>
+          <Button title="Go Home" onPress={() => navigation.navigate('Home')}>
+            GO HOME!
+          </Button>
+        </View>
+      )}
     </View>
   );
 }
