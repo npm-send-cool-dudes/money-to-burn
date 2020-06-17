@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, Alert } from 'react-native';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -9,7 +9,8 @@ import {
   useObject,
 } from 'react-firebase-hooks/database';
 
-let scoreDisplay = [[1, 1]];
+
+let winner = false;
 
 export default function ClikBait({ navigation }) {
   const [user, loading, error] = useAuthState(db.auth());
@@ -24,8 +25,17 @@ export default function ClikBait({ navigation }) {
 
   const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
 
+
+  //TODO look into refactoring, maybe remove useEffect
+  //TODO clean up game object when done
   useEffect(() => {
-    scoreDisplay = allScores ? Object.entries(allScores) : [];
+    allScores &&
+      Object.keys(allScores).map((userKey) => {
+        if (allScores[userKey] >= 9) {
+          winner = userKey;
+        }
+      });
+
   }, [allScores]);
 
   const [personalScore] = useObjectVal(
@@ -34,7 +44,6 @@ export default function ClikBait({ navigation }) {
 
   function buttonPress() {
     //update database
-
     db.database()
       .ref(`/GamesList/clikBait/`)
       .update({ [uid]: personalScore + 1 });
@@ -51,20 +60,33 @@ export default function ClikBait({ navigation }) {
       {/* {Object.keys(clikBaitPlayer).map((key) =>
         key !== 'winner' ? key[uid] : null
       )} */}
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Login"
-        onPress={() => navigation.navigate('Login')}
-      />
-      {scoreDisplay.map(([player, score]) => (
-        <Text key={player}>
-          {player} {score}
-        </Text>
-      ))}
 
-      <Button onPress={buttonPress} title="push me" color="red" />
+      {!winner && (
+        <View>
+          {allScores &&
+            Object.keys(allScores).map((userKey) => {
+              if (userKey !== uid) {
+                return (
+                  <Text key={userKey}>
+                    {userKey} Score: {allScores[userKey]}
+                  </Text>
+                );
+              }
+            })}
+          <Text>Personal Score: {personalScore}</Text>
 
-      <Text>Winner is!!!!!!!!!!</Text>
+
+          <Button onPress={buttonPress} title="push me" color="red" />
+        </View>
+      )}
+      {winner && (
+        <View>
+          <Text>Winner is {winner}</Text>
+          <Button title="Go Home" onPress={() => navigation.navigate('Home')}>
+            GO HOME!
+          </Button>
+        </View>
+      )}
     </View>
   );
 }
