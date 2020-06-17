@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, Alert } from 'react-native';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
@@ -22,6 +22,15 @@ export default function ClikBait({ navigation }) {
 
   const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
 
+  useEffect(() => {
+    allScores &&
+      Object.keys(allScores).map((userKey) => {
+        if (allScores[userKey] >= 10) {
+          Alert.alert(`${userKey} is the winner!`);
+          //this whole thing can actually be a function we make that
+        }
+      });
+  }, [allScores]);
   console.log('all', allScores);
 
   const [personalScore] = useObjectVal(
@@ -63,10 +72,7 @@ export default function ClikBait({ navigation }) {
             );
           }
         })}
-      <Text>
-        {uid}
-        personal Score{personalScore}
-      </Text>
+      <Text>Personal Score: {personalScore}</Text>
 
       <Button onPress={buttonPress} title="push me" color="red" />
 
