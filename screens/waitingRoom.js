@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Image } from 'react-native';
 import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
@@ -14,10 +14,12 @@ const QRcode = {
 
 export default function WaitingRoom(props) {
   const [user, loading, error] = useAuthState(db.auth());
+
   let uid = user.uid;
   let navigation = props.navigation;
-  let roomName = props.route.params.name;
-  let { gameName } = props;
+  let roomName = props.route.params.roomName;
+  let { gameName } = props.route.params;
+  console.log('wiating room', props);
 
   let playerStatus = db
     .database()
@@ -30,15 +32,9 @@ export default function WaitingRoom(props) {
 
   const ready = players
     .map((player) => {
-      return !player.status;
+      return player.status;
     })
     .includes(true);
-
-  // const listener = db.database().ref(`/Rooms/${roomName}/status`);
-  // listener.on('value', function (snap) {
-  //   console.log('test', snap.val());
-  //   if (snap.val()) navigation.navigate('ClikBait');
-  // });
 
   useEffect(() => {
     uid &&
@@ -56,6 +52,7 @@ export default function WaitingRoom(props) {
 
   const navToGame = () => {
     db.database().ref(`/Rooms/${roomName}/`).update({ status: true });
+    navigation.navigate(gameName);
   };
 
   return (

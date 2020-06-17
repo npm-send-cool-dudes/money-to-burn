@@ -13,7 +13,7 @@ export default function GameCard(props) {
     <View style={styles.background}>
       <Image source={logo} style={styles.logo} />
       <View style={styles.gameCardRight}>
-        <Text style={styles.gameTitle}>{props.gameTitle}</Text>
+        <Text style={styles.gameName}>{props.gameName}</Text>
         <Text style={styles.difficulty}> Difficulty</Text>
         <Rating
           type="custom"
