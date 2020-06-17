@@ -27,17 +27,25 @@ export default function WaitingRoom(props) {
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
 
+  //TODO add ready status to firebase
   useEffect(() => {
-    let filterVal = players
+    let ready = players
       .map((player) => {
-        return player.status;
+        return !player.status;
       })
-      .includes(false);
-    setReadyToPlay(filterVal);
+      .includes(true);
+    setReadyToPlay(!ready);
   }, [players]);
 
-  console.log('status', status);
-
+  const navToClikBait = () => {
+    db.database().ref(`/Rooms/${roomName}/`).update({ status: true });
+  };
+  // console.log('status', status);
+  const listener = db.database().ref(`/Rooms/${roomName}/status`);
+  listener.on('value', function (snap) {
+    console.log('test', snap.val());
+    if (snap.val()) navigation.navigate('ClikBait');
+  });
   useEffect(() => {
     uid &&
       db
@@ -52,12 +60,14 @@ export default function WaitingRoom(props) {
       .update({ status: !status });
   }
 
-  console.log('waiting room props', props);
+  // console.log('waiting room props', props);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {uid && <Text> {uid} </Text>}
-      <Text>{!readyToPlay ? 'ready' : 'Go away'}</Text>
+      {readyToPlay && (
+        <Button onPress={navToClikBait} title="READY!!!!!!!!!!!!!!!"></Button>
+      )}
       <Image source={QRcode} style={styles.logo} />
       <Text>ROOM ${roomName}</Text>
       {loading && <Text> loading players... </Text>}
@@ -69,6 +79,7 @@ export default function WaitingRoom(props) {
             status={player.status ? 'Ready' : 'Waiting'}
           />
         ))}
+
       <Button title="Ready!" onPress={() => button(roomName, uid)} />
     </View>
   );
