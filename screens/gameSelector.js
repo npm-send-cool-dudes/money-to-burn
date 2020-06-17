@@ -15,11 +15,12 @@ export default function GameSelector({ navigation }) {
   const [gamesList, error, loading] = useListKeys(
     db.database().ref('/GamesList/')
   );
-
+  // TODO map over gameslist to render GameCards
   console.log('gameslist', gamesList);
   return (
     <ScrollView style={styles.background}>
       <GameCard nav={navigation} gameName={gamesList[0]} />
+      <GameCard nav={navigation} gameName={gamesList[1]} />
     </ScrollView>
   );
 }

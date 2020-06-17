@@ -19,7 +19,7 @@ export default function WaitingRoom(props) {
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
-  console.log('wiating room', props);
+  console.log('waiting room', props);
 
   let playerStatus = db
     .database()
@@ -29,7 +29,7 @@ export default function WaitingRoom(props) {
 
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
-
+  //removed useeffect and put in firebase hook
   const ready = players
     .map((player) => {
       return player.status;
