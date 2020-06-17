@@ -17,6 +17,7 @@ export default function WaitingRoom(props) {
   let uid = user.uid;
   let navigation = props.navigation;
   let roomName = props.route.params.name;
+  let { gameName } = props;
 
   let playerStatus = db
     .database()
@@ -27,7 +28,6 @@ export default function WaitingRoom(props) {
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
 
-  //TODO add ready status to firebase
   useEffect(() => {
     let ready = players
       .map((player) => {
@@ -40,12 +40,13 @@ export default function WaitingRoom(props) {
   const navToClikBait = () => {
     db.database().ref(`/Rooms/${roomName}/`).update({ status: true });
   };
-  // console.log('status', status);
+
   const listener = db.database().ref(`/Rooms/${roomName}/status`);
   listener.on('value', function (snap) {
     console.log('test', snap.val());
     if (snap.val()) navigation.navigate('ClikBait');
   });
+
   useEffect(() => {
     uid &&
       db
