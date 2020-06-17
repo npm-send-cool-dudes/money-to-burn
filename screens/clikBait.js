@@ -9,6 +9,7 @@ import {
   useObject,
 } from 'react-firebase-hooks/database';
 
+
 let winner = false;
 
 export default function ClikBait({ navigation }) {
@@ -24,6 +25,7 @@ export default function ClikBait({ navigation }) {
 
   const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
 
+
   //TODO look into refactoring, maybe remove useEffect
   //TODO clean up game object when done
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function ClikBait({ navigation }) {
           winner = userKey;
         }
       });
+
   }, [allScores]);
 
   const [personalScore] = useObjectVal(
@@ -51,11 +54,13 @@ export default function ClikBait({ navigation }) {
   targetScore (win condition)
 
 */
+  console.log('scoredisplay', scoreDisplay);
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {/* {Object.keys(clikBaitPlayer).map((key) =>
         key !== 'winner' ? key[uid] : null
       )} */}
+
       {!winner && (
         <View>
           {allScores &&
@@ -69,6 +74,7 @@ export default function ClikBait({ navigation }) {
               }
             })}
           <Text>Personal Score: {personalScore}</Text>
+
 
           <Button onPress={buttonPress} title="push me" color="red" />
         </View>

@@ -13,7 +13,7 @@ export default function GameCard(props) {
     <View style={styles.background}>
       <Image source={logo} style={styles.logo} />
       <View style={styles.gameCardRight}>
-        <Text style={styles.gameTitle}>ClikBait</Text>
+        <Text style={styles.gameName}>{props.gameName}</Text>
         <Text style={styles.difficulty}> Difficulty</Text>
         <Rating
           type="custom"
@@ -30,7 +30,8 @@ export default function GameCard(props) {
             buttonStyle={styles.playNow}
             onPress={() =>
               props.nav.navigate('WaitingRoom', {
-                name: Math.floor(Math.random() * 10000),
+                roomName: Math.floor(Math.random() * 10000),
+                gameName: props.gameName,
               })
             }
           />
