@@ -55,11 +55,13 @@ export default function ClikBait({ navigation }) {
       />
       {allScores &&
         Object.keys(allScores).map((userKey) => {
-          return (
-            <Text key={userKey}>
-              {userKey} Score: {allScores[userKey]}
-            </Text>
-          );
+          if (userKey !== uid) {
+            return (
+              <Text key={userKey}>
+                {userKey} Score: {allScores[userKey]}
+              </Text>
+            );
+          }
         })}
       <Text>
         {uid}
