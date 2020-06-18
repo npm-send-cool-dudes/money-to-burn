@@ -20,6 +20,8 @@ export default function WaitingRoom(props) {
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
   console.log('waiting room', props);
+  console.log('gameName is', gameName);
+  console.log('roomName is ', roomName);
 
   let playerStatus = db
     .database()
