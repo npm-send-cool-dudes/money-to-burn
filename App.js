@@ -29,7 +29,8 @@ export default function App() {
           <Stack.Screen name="JoinRoom" component={JoinRoom} />
           <Stack.Screen name="Login" component={Login} />
           {/* gameListStart */}
-          <Stack.Screen name="ClikBait" component={ClikBait} />
+          {/* clickBait was labeled ClikBait which broke the app */}
+          <Stack.Screen name="clikBait" component={ClikBait} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

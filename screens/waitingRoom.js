@@ -19,6 +19,7 @@ export default function WaitingRoom(props) {
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
+  console.log(props);
   console.log('gameName is', gameName);
   console.log('roomName is ', roomName);
 
@@ -31,6 +32,22 @@ export default function WaitingRoom(props) {
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   const [players] = useListVals(playerList);
   //removed useeffect and put in firebase hook
+
+  let roomStatusData = db.database().ref(`/Rooms/${roomName}/status`);
+  const [roomStatus] = useObjectVal(roomStatusData);
+
+  console.log(roomStatus);
+
+  //grabbing nextGame from the DB
+  let nextGameData = db.database().ref(`/Rooms/${roomName}/nextGame`);
+  const [nextGame] = useObjectVal(nextGameData);
+
+  //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
+  if (roomStatus) {
+    //for when users join this game, this becomes undefined so users don't automatically navigate to the right game
+    navigation.navigate(nextGame);
+  }
+
   const ready = players
     .map((player) => {
       return player.status;
@@ -38,6 +55,12 @@ export default function WaitingRoom(props) {
     .includes(false);
 
   useEffect(() => {
+    //added another line to the useffect to give the room a false statement
+    db.database().ref(`/Rooms/${roomName}`).update({ status: false });
+    //if you join the room, you don't have access to the gameName prop, so i set this up so when the first user creates the game, it gets pushed to the room. This is where all clients can access the next game for now. THis will be updates as we move the actual game rules onto the room object
+    gameName &&
+      db.database().ref(`/Rooms/${roomName}`).update({ nextGame: gameName });
+
     uid &&
       db
         .database()
@@ -53,8 +76,8 @@ export default function WaitingRoom(props) {
   }
 
   const navToGame = () => {
+    //removed navigation from this function
     db.database().ref(`/Rooms/${roomName}/`).update({ status: true });
-    navigation.navigate(gameName);
   };
 
   return (
