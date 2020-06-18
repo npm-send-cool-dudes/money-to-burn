@@ -19,7 +19,6 @@ export default function WaitingRoom(props) {
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
-  console.log('waiting room', props);
   console.log('gameName is', gameName);
   console.log('roomName is ', roomName);
 
@@ -36,7 +35,7 @@ export default function WaitingRoom(props) {
     .map((player) => {
       return player.status;
     })
-    .includes(true);
+    .includes(false);
 
   useEffect(() => {
     uid &&
@@ -44,6 +43,7 @@ export default function WaitingRoom(props) {
         .database()
         .ref(`/Rooms/${roomName}/playerList/${uid}`)
         .update({ uid: uid, status: false });
+    //why are we adding a UID to our UID object on playerList? is this where we'll eventually store player names?
   }, [uid]);
 
   function playerReady() {
@@ -60,7 +60,7 @@ export default function WaitingRoom(props) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {uid && <Text> {uid} </Text>}
-      {ready && <Button onPress={navToGame} title="READY!!!!!!!!!!!!!!!" />}
+      {!ready && <Button onPress={navToGame} title="READY!!!!!!!!!!!!!!!" />}
       <Image source={QRcode} style={styles.logo} />
       <Text>ROOM ${roomName}</Text>
       {loading && <Text> loading players... </Text>}
