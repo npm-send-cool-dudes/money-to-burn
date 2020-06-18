@@ -23,7 +23,8 @@ export default function JoinRoom({ navigation }) {
       Alert.alert('Room not found');
       console.log('Room not found');
     } else {
-      navigation.navigate('WaitingRoom', { name: roomName });
+      //fuxed this prop being named incorrectly
+      navigation.navigate('WaitingRoom', { roomName: roomName });
     }
   }
 

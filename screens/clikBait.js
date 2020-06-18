@@ -9,9 +9,9 @@ import {
   useObject,
 } from 'react-firebase-hooks/database';
 
-let winner = false;
-
 export default function ClikBait({ navigation }) {
+  const [winner, setWinner] = useState();
+
   const [user, loading, error] = useAuthState(db.auth());
   //TODO change this line once room DB hook for games is done
   let uid = user.uid;
@@ -29,8 +29,8 @@ export default function ClikBait({ navigation }) {
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey] >= 9) {
-          winner = userKey;
+        if (allScores[userKey] >= 10) {
+          setWinner(userKey);
         }
       });
   }, [allScores]);
@@ -41,9 +41,13 @@ export default function ClikBait({ navigation }) {
 
   function buttonPress() {
     //update database
-    db.database()
-      .ref(`/GamesList/clikBait/`)
-      .update({ [uid]: personalScore + 1 });
+    // db.database()
+    //   .ref(`/GamesList/clikBait/`)
+    //   .update({ [uid]: personalScore + 1 });
+    const currentScoreRef = db.database().ref(`/GamesList/clikBait/${uid}`);
+    currentScoreRef.transaction((currentScore = 0) => {
+      return currentScore + 1;
+    });
   }
   /*need
   userNames
