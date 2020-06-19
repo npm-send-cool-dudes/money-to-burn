@@ -10,7 +10,7 @@ function Food({ position, size }) {
       style={{
         width: size,
         height: size,
-        backgroundColor: 'green',
+        backgroundColor: 'blue',
         position: 'absolute',
         left: x * size,
         top: y * size,

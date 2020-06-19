@@ -28,16 +28,19 @@ function Snek() {
     }
   };
 
+  //function to randomize coordinates for the next piece of food
   const randomBetween = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
+
+  //reset the game to default state for the next round of the game
   const reset = () => {
     engine.swap({
       head: {
         position: [0, 0],
         xspeed: 1,
         yspeed: 0,
-        updateFrequency: 10,
+        updateFrequency: 5,
         nextMove: 10,
         size: Constants.CELL_SIZE,
         renderer: <Head />,
@@ -58,6 +61,7 @@ function Snek() {
     });
     setState({ running: true });
   };
+
   return (
     <View style={styles.container}>
       <GameEngine
@@ -75,7 +79,7 @@ function Snek() {
             position: [0, 0],
             xspeed: 1,
             yspeed: 0,
-            updateFrequency: 10,
+            updateFrequency: 5,
             nextMove: 10,
             size: Constants.CELL_SIZE,
             renderer: <Head />,
@@ -99,6 +103,8 @@ function Snek() {
         running={state.running}
       ></GameEngine>
       <Button title="New Game" onPress={reset}></Button>
+
+      {/* control buttons */}
       <View style={styles.controls}>
         <View style={styles.controlRow}>
           <TouchableOpacity
@@ -141,6 +147,8 @@ function Snek() {
     </View>
   );
 }
+
+//styling controlled here
 const styles = StyleSheet.create({
   container: {
     flex: 1,

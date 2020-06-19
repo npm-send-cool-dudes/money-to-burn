@@ -33,7 +33,7 @@ const GameLoop = (entities, { touches, dispatch, events }) => {
       head.position[1] + head.yspeed < 0 ||
       head.position[1] + head.yspeed >= Constants.GRID_SIZE
     ) {
-      //gameover
+      //game over events
       dispatch({
         type: 'game-over',
       });
@@ -61,7 +61,7 @@ const GameLoop = (entities, { touches, dispatch, events }) => {
         tail.elements = [[food.position[0], food.position[1]]].concat(
           tail.elements
         );
-        //TODO grow tail
+        // grow tail
         food.position[0] = randomBetween(0, Constants.GRID_SIZE - 1);
         food.position[1] = randomBetween(0, Constants.GRID_SIZE - 1);
       }
