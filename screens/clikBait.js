@@ -2,19 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Alert } from 'react-native';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  useListVals,
-  useObjectVal,
-  useList,
-  useObject,
-} from 'react-firebase-hooks/database';
+import roomCleanUp from '../utilFuncs/roomCleanUp';
+import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 
-export default function ClikBait({ navigation }) {
+export default function ClikBait(props) {
   const [winner, setWinner] = useState();
 
   const [user, loading, error] = useAuthState(db.auth());
   //TODO change this line once room DB hook for games is done
   let uid = user.uid;
+  let navigation = props.navigation;
+  let roomName = props.route.params.roomName;
 
   useEffect(() => {
     db.database()
@@ -40,10 +38,6 @@ export default function ClikBait({ navigation }) {
   );
 
   function buttonPress() {
-    //update database
-    // db.database()
-    //   .ref(`/GamesList/clikBait/`)
-    //   .update({ [uid]: personalScore + 1 });
     const currentScoreRef = db.database().ref(`/GamesList/clikBait/${uid}`);
     currentScoreRef.transaction((currentScore = 0) => {
       return currentScore + 1;
@@ -55,12 +49,15 @@ export default function ClikBait({ navigation }) {
   targetScore (win condition)
 
 */
+
+  //this may seem redundant as we are creating another playerlist further up, bit that playerlist is on the clikBait object, and this one is on the room. Eventually we will be moving clikBait onto the room itself so we wan't to use this for cleanup
+  let playerList = db
+    .database()
+    .ref(`/Rooms/${props.route.params.roomName}/playerList/`);
+  const [playerListTest] = useListVals(playerList);
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {/* {Object.keys(clikBaitPlayer).map((key) =>
-        key !== 'winner' ? key[uid] : null
-      )} */}
-
       {!winner && (
         <View>
           {allScores &&
@@ -81,7 +78,12 @@ export default function ClikBait({ navigation }) {
       {winner && (
         <View>
           <Text>Winner is {winner}</Text>
-          <Button title="Go Home" onPress={() => navigation.navigate('Home')}>
+          <Button
+            title="Go Home"
+            onPress={() =>
+              roomCleanUp(navigation, roomName, uid, playerListTest)
+            }
+          >
             GO HOME!
           </Button>
         </View>

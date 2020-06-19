@@ -7,7 +7,7 @@ import 'firebase/auth';
 import 'firebase/functions';
 import 'firebase/database';
 
-var firebaseConfig = {
+const firebaseConfig = {
   apiKey: process.env.FIREBASE_API,
   authDomain: process.env.AUTH_DOMAIN,
   databaseURL: process.env.DATABASE_URL,
