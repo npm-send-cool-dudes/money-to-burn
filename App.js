@@ -16,7 +16,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [user, loading, error] = useAuthState(db.auth());
-
+  console.log('db', db);
   console.log('home login id', user && user.uid);
 
   return (

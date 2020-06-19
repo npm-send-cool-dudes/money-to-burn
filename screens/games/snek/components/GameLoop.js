@@ -1,5 +1,4 @@
 import { Constants } from './Constants';
-import Food from './Food';
 const randomBetween = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
