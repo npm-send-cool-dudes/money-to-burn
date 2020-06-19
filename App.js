@@ -11,6 +11,7 @@ import GameSelector from './screens/gameSelector';
 import WaitingRoom from './screens/waitingRoom';
 import JoinRoom from './screens/joinRoom';
 import ClikBait from './screens/clikBait';
+import Snek from './screens/games/snek/Snek';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ export default function App() {
           {/* gameListStart */}
           {/* clickBait was labeled ClikBait which broke the app */}
           <Stack.Screen name="clikBait" component={ClikBait} />
+          <Stack.Screen name="snek" component={Snek} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
