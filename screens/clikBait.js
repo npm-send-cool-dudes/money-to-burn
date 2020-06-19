@@ -14,16 +14,22 @@ export default function ClikBait(props) {
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
 
-  useEffect(() => {
-    db.database()
-      .ref('/GamesList/clikBait/')
-      .update({ [uid]: 0 });
-  }, []);
+  //this may seem redundant as we are creating another playerlist further up, bit that playerlist is on the clikBait object, and this one is on the room. Eventually we will be moving clikBait onto the room itself so we wan't to use this for cleanup
+  let playerListData = db.database().ref(`/Rooms/${roomName}/playerList`);
+  const [playerList] = useListVals(playerListData);
 
-  const [allScores] = useObjectVal(db.database().ref(`/GamesList/clikBait/`));
+  const [allScores] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/Game/Scores`)
+  );
+
+  //TODO i removed the below, as i decided it makes more sense to push your player data onto the scoreboard when you're in the waiting room. was having difficulties when we did it on here.
+  // useEffect(() => {
+  //   allScores && allScores.update({ Scores: { [uid]: 0 } });
+  // }, []);
 
   //TODO look into refactoring, maybe remove useEffect
   //TODO clean up game object when done
+
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
@@ -34,14 +40,19 @@ export default function ClikBait(props) {
   }, [allScores]);
 
   const [personalScore] = useObjectVal(
-    db.database().ref(`/GamesList/clikBait/${uid}`)
+    db.database().ref(`/Rooms/${roomName}/Game/Scores/${uid}`)
   );
 
   function buttonPress() {
-    const currentScoreRef = db.database().ref(`/GamesList/clikBait/${uid}`);
+    const currentScoreRef = db
+      .database()
+      .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
     currentScoreRef.transaction((currentScore = 0) => {
       return currentScore + 1;
     });
+    // //TODO delete the below code, using to test cloning data to another path
+    // const room = db.database().ref(`/Rooms/${roomName}`);
+    // room.update({ game: allScores });
   }
   /*need
   userNames
@@ -49,12 +60,6 @@ export default function ClikBait(props) {
   targetScore (win condition)
 
 */
-
-  //this may seem redundant as we are creating another playerlist further up, bit that playerlist is on the clikBait object, and this one is on the room. Eventually we will be moving clikBait onto the room itself so we wan't to use this for cleanup
-  let playerList = db
-    .database()
-    .ref(`/Rooms/${props.route.params.roomName}/playerList/`);
-  const [playerListTest] = useListVals(playerList);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -80,9 +85,7 @@ export default function ClikBait(props) {
           <Text>Winner is {winner}</Text>
           <Button
             title="Go Home"
-            onPress={() =>
-              roomCleanUp(navigation, roomName, uid, playerListTest)
-            }
+            onPress={() => roomCleanUp(navigation, roomName, uid, playerList)}
           >
             GO HOME!
           </Button>

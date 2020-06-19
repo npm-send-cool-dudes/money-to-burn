@@ -39,12 +39,13 @@ export default function WaitingRoom(props) {
   console.log(roomStatus);
 
   //grabbing nextGame from the DB
-  let nextGameData = db.database().ref(`/Rooms/${roomName}/nextGame`);
+  let nextGameData = db.database().ref(`/Rooms/${roomName}/Game/Name`);
   const [nextGame] = useObjectVal(nextGameData);
 
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
     //for when users join this game, roomName does not exist so users don't automatically navigate to the right game
+    console.log(roomName);
     navigation.navigate(nextGame, { roomName: roomName });
   }
 
@@ -59,7 +60,14 @@ export default function WaitingRoom(props) {
     db.database().ref(`/Rooms/${roomName}`).update({ status: false });
     //if you join the room, you don't have access to the gameName prop, so i set this up so when the first user creates the game, it gets pushed to the room. This is where all clients can access the next game for now. THis will be updates as we move the actual game rules onto the room object
     gameName &&
-      db.database().ref(`/Rooms/${roomName}`).update({ nextGame: gameName });
+      db.database().ref(`/Rooms/${roomName}/Game`).update({ Name: gameName });
+
+    //added scoreboard creation on here, as i was having difficulty placing it in within clikBait
+    uid &&
+      db
+        .database()
+        .ref(`/Rooms/${roomName}/Game/Scores`)
+        .update({ [uid]: 0 });
 
     uid &&
       db
