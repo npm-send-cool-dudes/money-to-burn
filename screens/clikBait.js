@@ -22,10 +22,11 @@ export default function ClikBait(props) {
     db.database().ref(`/Rooms/${roomName}/Game/Scores`)
   );
 
-  //TODO i removed the below, as i decided it makes more sense to push your player data onto the scoreboard when you're in the waiting room. was having difficulties when we did it on here.
-  // useEffect(() => {
-  //   allScores && allScores.update({ Scores: { [uid]: 0 } });
-  // }, []);
+  //TODO This can be removed if we want to keep score handling on the waiting room
+  useEffect(() => {
+    const playerData = db.database().ref(`/Rooms/${roomName}/Game/Scores/`);
+    playerData.update({ [uid]: 0 });
+  }, []);
 
   //TODO look into refactoring, maybe remove useEffect
   //TODO clean up game object when done

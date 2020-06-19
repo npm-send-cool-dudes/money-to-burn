@@ -60,12 +60,12 @@ export default function WaitingRoom(props) {
     gameName &&
       db.database().ref(`/Rooms/${roomName}/Game`).update({ Name: gameName });
 
-    //added scoreboard creation on here, as i was having difficulty placing it in within clikBait
-    uid &&
-      db
-        .database()
-        .ref(`/Rooms/${roomName}/Game/Scores`)
-        .update({ [uid]: 0 });
+    //TODO i added the scoreboard functionality on here. I decided to undo it as it does make more sense to add the scores based on the game. What if snake doesn't use scores? it is here though in case somebody decided to go that route.
+    // uid &&
+    //   db
+    //     .database()
+    //     .ref(`/Rooms/${roomName}/Game/Scores`)
+    //     .update({ [uid]: 0 });
 
     uid &&
       db
