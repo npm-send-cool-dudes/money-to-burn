@@ -19,9 +19,6 @@ export default function WaitingRoom(props) {
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
-  console.log(props);
-  console.log('gameName is', gameName);
-  console.log('roomName is ', roomName);
 
   let playerStatus = db
     .database()
@@ -36,11 +33,12 @@ export default function WaitingRoom(props) {
   let roomStatusData = db.database().ref(`/Rooms/${roomName}/status`);
   const [roomStatus] = useObjectVal(roomStatusData);
 
-  console.log(roomStatus);
-
   //grabbing nextGame from the DB
   let nextGameData = db.database().ref(`/Rooms/${roomName}/Game/Name`);
   const [nextGame] = useObjectVal(nextGameData);
+
+  let gameObj = db.database().ref(`/GamesList/${gameName}`);
+  const [gameRules] = useObjectVal(gameObj);
 
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
@@ -76,6 +74,15 @@ export default function WaitingRoom(props) {
         .update({ uid: uid, status: false });
     //why are we adding a UID to our UID object on playerList? is this where we'll eventually store player names?
   }, [uid]);
+
+  //this copies the gameRules from rules list onto our room object
+  useEffect(() => {
+    gameRules &&
+      db
+        .database()
+        .ref(`/Rooms/${roomName}/Game`)
+        .update({ gameRules: gameRules.rules });
+  }, [gameRules]);
 
   function playerReady() {
     db.database()
