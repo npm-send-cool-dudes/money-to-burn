@@ -45,7 +45,7 @@ export default function WaitingRoom(props) {
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
     //for when users join this game, this becomes undefined so users don't automatically navigate to the right game
-    navigation.navigate(nextGame);
+    navigation.navigate(nextGame, { roomName: roomName });
   }
 
   const ready = players

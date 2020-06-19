@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Alert } from 'react-native';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import roomCleanUp from '../utilFuncs/roomCleanUp';
 import {
   useListVals,
   useObjectVal,
@@ -9,7 +10,7 @@ import {
   useObject,
 } from 'react-firebase-hooks/database';
 
-export default function ClikBait({ navigation }) {
+export default function ClikBait(props) {
   const [winner, setWinner] = useState();
 
   const [user, loading, error] = useAuthState(db.auth());
@@ -55,6 +56,29 @@ export default function ClikBait({ navigation }) {
   targetScore (win condition)
 
 */
+  let playerList = db
+    .database()
+    .ref(`/Rooms/${props.route.params.roomName}/playerList/`);
+  let rooms = db.database().ref(`/Rooms/`);
+  const [playerListTest] = useListVals(playerList);
+
+  function roomCleanUpTest(navigation, roomName, uid, playerReference) {
+    playerList.update({
+      [uid]: null,
+    });
+    if (playerListTest.length === 1) {
+      rooms.update({
+        [roomName]: null,
+      });
+    }
+    console.log(playerListTest);
+
+    // db.database()
+    //   .ref(`/Rooms/${roomName}/playerList`)
+    //   .update({ [uid]: null });
+    navigation.navigate('Home');
+  }
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {/* {Object.keys(clikBaitPlayer).map((key) =>
@@ -81,7 +105,17 @@ export default function ClikBait({ navigation }) {
       {winner && (
         <View>
           <Text>Winner is {winner}</Text>
-          <Button title="Go Home" onPress={() => navigation.navigate('Home')}>
+          <Button
+            title="Go Home"
+            onPress={() =>
+              roomCleanUp(
+                props.navigation,
+                props.route.params.roomName,
+                uid,
+                playerListTest
+              )
+            }
+          >
             GO HOME!
           </Button>
         </View>
