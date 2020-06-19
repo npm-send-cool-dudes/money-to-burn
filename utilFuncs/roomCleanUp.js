@@ -16,9 +16,16 @@ export default function roomCleanUp(
   playerReference
 ) {
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
+  let rooms = db.database().ref(`/Rooms/`);
   playerList.update({
     [uid]: null,
   });
+
+  if (playerReference.length <= 1) {
+    rooms.update({
+      [roomName]: null,
+    });
+  }
 
   // const [playerListTest, setPlayerListTest] = useList(playerList);
   console.log(playerReference);
