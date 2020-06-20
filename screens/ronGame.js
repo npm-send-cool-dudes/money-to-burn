@@ -66,17 +66,14 @@ Matter.World.add(world, [initialBox, floor]);
 
 const Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
-  engine.world.gravity.y = 0.5;
+  engine.world.gravity.y = 0;
   Matter.Engine.update(engine, time.delta);
   return entities;
 };
 
 let debris = [];
 
-const _addObjectsToWorld = (ball) => {
-  const engine = Matter.Engine.create({ enableSleeping: true });
-  const world = engine.world;
-
+const _addObjectsToWorld = () => {
   let objects = [ball, floor];
 
   //create the bodies for blocks
@@ -94,7 +91,6 @@ const _addObjectsToWorld = (ball) => {
     debris.push(debris2);
   }
   objects = objects.concat(debris);
-  console.log('objkects', objects);
   Matter.World.add(world, objects);
   return {
     engine,
@@ -102,7 +98,7 @@ const _addObjectsToWorld = (ball) => {
   };
 };
 
-const _getEntities = (engine, world, ball) => {
+const _getEntities = () => {
   const entities = {
     physics: {
       engine,
@@ -110,7 +106,7 @@ const _getEntities = (engine, world, ball) => {
     },
 
     playerBall: {
-      body: ball,
+      body: initialBox,
       size: [BALL_SIZE, BALL_SIZE],
       renderer: Circle,
     },
@@ -134,12 +130,11 @@ const _getEntities = (engine, world, ball) => {
         renderer: Box,
       },
     });
-
-    return entities;
   }
+  return entities;
 };
 
-const _setupCollisionHandler = (engine) => {
+const _setupCollisionHandler = () => {
   const pairs = event.pairs;
 
   const objA = pairs[0].bodyA.label;
@@ -163,8 +158,10 @@ const _setupCollisionHandler = (engine) => {
     }
   }
 };
-_getEntities(engine, world, ball);
+
 _addObjectsToWorld(ball);
+_getEntities();
+
 // _setupCollisionHandler(engine);
 
 console.log('world', world);
@@ -225,23 +222,7 @@ export default function App() {
     <GameEngine
       style={styles.container}
       systems={[Physics]}
-      entities={{
-        physics: {
-          engine: engine,
-          world: world,
-        },
-        initialBox: {
-          body: initialBox,
-          size: [BALL_SIZE, BALL_SIZE],
-          renderer: Circle,
-        },
-        floor: {
-          body: floor,
-          size: [width, 10],
-          color: '#414448',
-          renderer: Box,
-        },
-      }}
+      entities={_getEntities()}
     >
       <StatusBar hidden={true} />
     </GameEngine>
