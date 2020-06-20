@@ -12,8 +12,7 @@ const Box = ({ body, size, color }) => {
       style={{
         position: 'absolute',
         left: x,
-        top,
-        y,
+        top: y,
         width: width,
         height: height,
         backgroundColor: color,
