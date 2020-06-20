@@ -298,7 +298,8 @@ const initialBox = Matter.Bodies.rectangle(
   width / 2,
   height / 2,
   boxSize,
-  boxSize
+  boxSize,
+  { isStatic: true }
 );
 
 const floor = Matter.Bodies.rectangle(
@@ -347,7 +348,7 @@ export default function App() {
   };
 
   const _fast = () => {
-    Accelerometer.setUpdateInterval(100);
+    Accelerometer.setUpdateInterval(15);
   };
 
   const _subscribe = () => {
@@ -364,6 +365,16 @@ export default function App() {
   };
 
   let { x, y, z } = data;
+
+  if (x && y) {
+    Matter.Body.setPosition(initialBox, {
+      x: width / 2 - 200 * Number(x),
+      y: height - height / 4,
+    });
+  }
+
+  console.log('x', x);
+
   return (
     // <View>
     /* <View style={styles.sensor}>
