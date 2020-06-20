@@ -62,11 +62,11 @@ const initialBox = Matter.Bodies.rectangle(
 const engine = Matter.Engine.create({ enableSleeping: false });
 const world = engine.world;
 
-Matter.World.add(world, [initialBox, floor]);
+// Matter.World.add(world, [initialBox, floor]);
 
 const Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
-  engine.world.gravity.y = 0;
+  engine.world.gravity.y = 0.3;
   Matter.Engine.update(engine, time.delta);
   return entities;
 };
@@ -77,7 +77,7 @@ const _addObjectsToWorld = () => {
   let objects = [ball, floor];
 
   //create the bodies for blocks
-  for (let x = 0; x <= 5; x++) {
+  for (let x = 0; x <= 2; x++) {
     const debris2 = Matter.Bodies.rectangle(
       randomInt(1, width - 30),
       randomInt(0, 200),
@@ -106,7 +106,7 @@ const _getEntities = () => {
     },
 
     playerBall: {
-      body: initialBox,
+      body: ball,
       size: [BALL_SIZE, BALL_SIZE],
       renderer: Circle,
     },
@@ -119,7 +119,7 @@ const _getEntities = () => {
     },
   };
 
-  for (let x = 0; x <= 5; x++) {
+  for (let x = 0; x <= 2; x++) {
     Object.assign(entities, {
       ['debris_' + x]: {
         body: debris[x],
@@ -135,34 +135,39 @@ const _getEntities = () => {
 };
 
 const _setupCollisionHandler = () => {
-  const pairs = event.pairs;
+  Matter.Events.on(engine, 'collisionStart', (event) => {
+    var pairs = event.pairs;
 
-  const objA = pairs[0].bodyA.label;
-  const objB = pairs[0].bodyB.label;
+    var objA = pairs[0].bodyA.label;
+    var objB = pairs[0].bodyB.label;
 
-  if (objA === 'floor' && objB === 'debris') {
-    Matter.Body.setPosition(pairs[0].bodyB, {
-      x: randomInt(1, width - 30),
-      y: randomInt(0, 200),
-    });
+    if (objA === 'floor' && objB === 'debris') {
+      Matter.Body.setPosition(pairs[0].bodyB, {
+        x: randomInt(1, width - 30),
+        y: randomInt(0, 200),
+      });
 
-    //   update in fb probably...
-    console.log('point up!');
-    if (objA === 'ball' && objB === 'debris') {
-      Alert.alert('Game Over');
-      // this.debris.forEach((debris) => {
-      //   Matter.Body.set(debris, {
-      //     isStatic: true,
-      //   });
-      // });
+      //   this.setState((state) => ({
+      //     score: state.score + 1,
+      //   }));
+      //   console.log('point!');
     }
-  }
+
+    if (objA === 'ball' && objB === 'debris') {
+      Alert.alert('Game Over', 'You lose...');
+      debris.forEach((debrisItem) => {
+        Matter.Body.set(debrisItem, {
+          isStatic: true,
+        });
+      });
+    }
+  });
 };
 
 _addObjectsToWorld(ball);
 _getEntities();
 
-// _setupCollisionHandler(engine);
+_setupCollisionHandler();
 
 console.log('world', world);
 export default function App() {
@@ -212,7 +217,7 @@ export default function App() {
   let { x, y, z } = data;
 
   if (x && y) {
-    Matter.Body.setPosition(initialBox, {
+    Matter.Body.setPosition(ball, {
       x: width / 2 - 200 * Number(x),
       y: height - height / 4,
     });
