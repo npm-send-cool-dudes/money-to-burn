@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Stylesheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 
 const { height, width } = Dimensions.get('window');
 
@@ -13,7 +13,7 @@ const Circle = ({ body }) => {
   return <View style={[styles.head, { left: x, top: y }]} />;
 };
 
-const styles = Stylesheet.create({
+const styles = StyleSheet.create({
   head: {
     backgroundColor: '#FF5877',
     borderColor: '#FFC1C1',

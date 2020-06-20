@@ -268,11 +268,61 @@
 // });
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Dimensions,
+  Alert,
+  StatusBar,
+} from 'react-native';
 import { Accelerometer } from 'expo-sensors';
+
+import { GameEngine } from 'react-native-game-engine';
+import Matter from 'matter-js';
+import randomInt from 'random-int';
+import randomColor from 'randomcolor';
+
+import Circle from './utilities/circle';
+// import Box from './utilities/box';
+
+import getRandomDecimal from './utilities/getRandomDecimal';
+
+import Box from './utilities/testBox';
+
+const { width, height } = Dimensions.get('screen');
+
+const boxSize = Math.trunc(Math.max(width, height) * 0.075);
+const initialBox = Matter.Bodies.rectangle(
+  width / 2,
+  height / 2,
+  boxSize,
+  boxSize
+);
+
+const floor = Matter.Bodies.rectangle(
+  width / 2,
+  height - boxSize / 2,
+  width,
+  boxSize,
+  { isStatic: true }
+);
+
+const engine = Matter.Engine.create({ enableSleeping: false });
+const world = engine.world;
+
+Matter.World.add(world, [initialBox, floor]);
+
+const Physics = (entities, { time }) => {
+  let engine = entities['physics'].engine;
+  Matter.Engine.update(engine, time.delta);
+  return entities;
+};
 
 export default function App() {
   const [data, setData] = useState({});
+  const [subscription, setSubscription] = useState(false);
 
   useEffect(() => {
     _toggle();
@@ -285,7 +335,7 @@ export default function App() {
   }, []);
 
   const _toggle = () => {
-    if (this._subscription) {
+    if (subscription) {
       _unsubscribe();
     } else {
       _subscribe();
@@ -301,40 +351,68 @@ export default function App() {
   };
 
   const _subscribe = () => {
-    this._subscription = Accelerometer.addListener((accelerometerData) => {
-      setData(accelerometerData);
-    });
+    setSubscription(
+      Accelerometer.addListener((accelerometerData) => {
+        setData(accelerometerData);
+      })
+    );
   };
 
   const _unsubscribe = () => {
-    this._subscription && this._subscription.remove();
-    this._subscription = null;
+    subscription && subscription.remove();
+    setSubscription(null);
   };
 
   let { x, y, z } = data;
   return (
-    <View style={styles.sensor}>
-      <Text style={styles.text}>
-        Accelerometer: (in Gs where 1 G = 9.81 m s^-2)
-      </Text>
-      <Text style={styles.text}>
-        x: {round(x)} y: {round(y)} z: {round(z)}
-      </Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={_toggle} style={styles.button}>
-          <Text>Toggle</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={_slow}
-          style={[styles.button, styles.middleButton]}
-        >
-          <Text>Slow</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={_fast} style={styles.button}>
-          <Text>Fast</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    // <View>
+    /* <View style={styles.sensor}>
+        <Text style={styles.text}>
+          Accelerometer: (in Gs where 1 G = 9.81 m s^-2)
+        </Text>
+        <Text style={styles.text}>
+          x: {round(x)} y: {round(y)} z: {round(z)}
+        </Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={_toggle} style={styles.button}>
+            <Text>Toggle</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={_slow}
+            style={[styles.button, styles.middleButton]}
+          >
+            <Text>Slow</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={_fast} style={styles.button}>
+            <Text>Fast</Text>
+          </TouchableOpacity>
+        </View>
+      </View> */
+    <GameEngine
+      style={styles.container}
+      systems={[Physics]}
+      entities={{
+        physics: {
+          engine: engine,
+          world: world,
+        },
+        initialBox: {
+          body: initialBox,
+          size: [boxSize, boxSize],
+          color: 'red',
+          renderer: Circle,
+        },
+        floor: {
+          body: floor,
+          size: [width, boxSize],
+          color: 'green',
+          renderer: Box,
+        },
+      }}
+    >
+      <StatusBar hidden={true} />
+    </GameEngine>
+    // </View>
   );
 }
 

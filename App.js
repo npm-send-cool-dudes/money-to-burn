@@ -25,7 +25,11 @@ export default function App() {
     <ThemeProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Ron" component={RonGame} />
+          <Stack.Screen
+            name="Ron"
+            component={RonGame}
+            options={{ headerShown: false }}
+          />
 
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="GameSelector" component={GameSelector} />
