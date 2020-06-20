@@ -1,0 +1,32 @@
+// - nouns
+//   gameObject
+//     - scores
+//   playerList object
+//     - aliveStatus
+
+// - verbs
+//   move left/right
+//   collide
+//   increase/decrease speed
+
+// basic description:
+// Obstacle Driving game:
+// Game where a user controls lateral movement of a sprite using gyroscope controls to dodge incoming obstacles
+//  features:
+//      - players can increase or decrease speed of "driving" (really increasing speed of obstacles) to gain more points
+
+// implementation:
+// player shown his/her own screen with a point counter a top to display all players scores
+// create world, player sprite, and obstacles
+// add physics/functionality to world, player, and obstacles
+// if collision, end scoring for player
+// ^if player collision, update aliveStatus to false in db to end scoring for player
+// set timeout for game length to end (~1min?) or when all players died
+
+// Obstacle Driving game component
+//   gameObject = object from firebase at path /Rooms/$roomCode/Game/
+//   Scores = object from firebase at path /Rooms/$roomCode/Game/gamerules/Scores
+//   playerAliveStatus = object from firebase at path /Rooms/$roomCode/Game/playerList/uid/alive
+//   ^used to keep track of if player has collided with
+
+//   winState = players(s) ighest number of objects dodged
