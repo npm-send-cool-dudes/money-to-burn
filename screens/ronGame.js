@@ -45,7 +45,7 @@ const floor = Matter.Bodies.rectangle(width / 2, height, width, 10, {
 const engine = Matter.Engine.create({ enableSleeping: false });
 const world = engine.world;
 
-const startGravity = 0.0;
+const startGravity = 0.01;
 
 let Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
@@ -306,9 +306,10 @@ export default function App(props) {
       )}
       {winner && (
         <Text style={styles.winner}>
-          winner is{' '}
+          Winner(s):
           {winner.map((player) => (
             <Text key={player} style={styles.winner}>
+              {'\n'}
               {player}
             </Text>
           ))}
@@ -333,7 +334,6 @@ export default function App(props) {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    // resizeMode: 'cover',
     justifyContent: 'center',
   },
   text: {
@@ -355,9 +355,10 @@ const styles = StyleSheet.create({
     height: height / 10,
   },
   winner: {
+    flex: 1,
     color: 'white',
     fontSize: 30,
-    justifyContent: 'center',
-    flex: 1,
+    textAlign: 'center',
+    marginTop: height / 2 - height / 6,
   },
 });
