@@ -166,7 +166,6 @@ const _setupCollisionHandler = () => {
 
 _addObjectsToWorld(ball);
 _getEntities();
-
 _setupCollisionHandler();
 
 export default function App() {
