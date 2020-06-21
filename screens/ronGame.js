@@ -190,6 +190,9 @@ export default function App(props) {
   };
 
   const _subscribe = () => {
+    //set how smooth player control of sprite is
+    Accelerometer.setUpdateInterval(100);
+
     setSubscription(
       Accelerometer.addListener((accelerometerData) => {
         setData(accelerometerData);
@@ -219,7 +222,14 @@ export default function App(props) {
       entities={_getEntities()}
     >
       <StatusBar hidden={true} />
-      <Text style={styles.text}>Score</Text>
+      {allScores &&
+        Object.keys(allScores).map((userKey) => {
+          return (
+            <Text key={userKey} style={styles.text}>
+              {userKey}: {allScores[userKey]}
+            </Text>
+          );
+        })}
     </GameEngine>
   );
 }
