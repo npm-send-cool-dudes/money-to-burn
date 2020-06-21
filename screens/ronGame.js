@@ -45,9 +45,11 @@ const floor = Matter.Bodies.rectangle(width / 2, height, width, 10, {
 const engine = Matter.Engine.create({ enableSleeping: false });
 const world = engine.world;
 
+const startGravity = 0.1;
+
 let Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
-  engine.world.gravity.y = 0.1;
+  engine.world.gravity.y = startGravity;
   Matter.Engine.update(engine, time.delta);
   return entities;
 };
@@ -171,6 +173,10 @@ export default function App(props) {
 
   const gravityIncrementer = 0.05;
 
+  const playerGravity = db
+    .database()
+    .ref(`/Rooms/${roomName}/Game/Gravity/${uid}`);
+
   const increaseGravity = () => {
     setGravity(gravity + gravityIncrementer);
     Physics = (entities, { time }) => {
@@ -205,6 +211,9 @@ export default function App(props) {
     db.database()
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
+    // db.database()
+    //   .ref(`/Rooms/${roomName}/Game/Gravity/`)
+    //   .update({ [uid]: startGravity });
     _toggle();
   }, []);
 
