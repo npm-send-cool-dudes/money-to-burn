@@ -198,17 +198,13 @@ export default function App(props) {
       });
       const winners = winnersAndScores.map((p) => p[0]);
       setWinner(winners);
+      //also stop game engine
     }
-    //also stop game engine
   }, [aliveStatusRoom]);
 
   const [gravity, setGravity] = useState(0.1);
 
   const gravityIncrementer = 0.05;
-
-  const playerGravity = db
-    .database()
-    .ref(`/Rooms/${roomName}/Game/Gravity/${uid}`);
 
   const increaseGravity = () => {
     setGravity(gravity + gravityIncrementer);
@@ -244,9 +240,6 @@ export default function App(props) {
     db.database()
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
-    // db.database()
-    //   .ref(`/Rooms/${roomName}/Game/Gravity/`)
-    //   .update({ [uid]: startGravity });
     _toggle();
   }, []);
 
@@ -299,17 +292,18 @@ export default function App(props) {
           'https://i.pinimg.com/originals/c9/46/27/c94627ca6c5147bc87157df09027ded3.gif',
       }}
     >
-      <GameEngine systems={[Physics]} entities={_getEntities()}>
-        {/* <StatusBar hidden={true} /> */}
-        {allScores &&
-          Object.keys(allScores).map((userKey) => {
-            return (
-              <Text key={userKey} style={styles.text}>
-                {userKey}: {allScores[userKey]}
-              </Text>
-            );
-          })}
-      </GameEngine>
+      {!winner && (
+        <GameEngine systems={[Physics]} entities={_getEntities()}>
+          {allScores &&
+            Object.keys(allScores).map((userKey) => {
+              return (
+                <Text key={userKey} style={styles.text}>
+                  {userKey}: {allScores[userKey]}
+                </Text>
+              );
+            })}
+        </GameEngine>
+      )}
       {winner && (
         <Text style={styles.winner}>
           winner is{' '}
