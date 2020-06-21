@@ -24,6 +24,8 @@ import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useObjectVal } from 'react-firebase-hooks/database';
 
+import GameTimer from './utilities/timer';
+
 const { width, height } = Dimensions.get('screen');
 
 const BALL_SIZE = 20;
