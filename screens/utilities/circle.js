@@ -3,7 +3,7 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 
 const { height, width } = Dimensions.get('window');
 
-const BODY_DIAMETER = Math.trunc(Math.max(width, height) * 0.05);
+const BODY_DIAMETER = Math.trunc(Math.max(width, height) * 0.1);
 const BORDER_WIDTH = Math.trunc(BODY_DIAMETER * 0.1);
 
 const Circle = ({ body }) => {
@@ -12,6 +12,8 @@ const Circle = ({ body }) => {
   const y = position.y - BODY_DIAMETER / 2;
   return <View style={[styles.head, { left: x, top: y }]} />;
 };
+
+export default Circle;
 
 const styles = StyleSheet.create({
   head: {
@@ -24,5 +26,3 @@ const styles = StyleSheet.create({
     borderRadius: BODY_DIAMETER * 2,
   },
 });
-
-export default Circle;

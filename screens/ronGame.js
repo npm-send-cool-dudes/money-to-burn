@@ -43,14 +43,6 @@ const floor = Matter.Bodies.rectangle(width / 2, height, width, 10, {
 
 const boxSize = Math.trunc(Math.max(width, height) * 0.075);
 
-const initialBox = Matter.Bodies.rectangle(
-  width / 2,
-  height / 2,
-  boxSize,
-  boxSize,
-  { isStatic: true }
-);
-
 // const floor = Matter.Bodies.rectangle(
 //   width / 2,
 //   height - boxSize / 2,
@@ -72,19 +64,20 @@ const Physics = (entities, { time }) => {
 };
 
 let debris = [];
+let obstacleCount = 4;
 
 const _addObjectsToWorld = () => {
   let objects = [ball, floor];
 
   //create the bodies for blocks
-  for (let x = 0; x <= 2; x++) {
+  for (let x = 0; x <= obstacleCount; x++) {
     const debris2 = Matter.Bodies.rectangle(
       randomInt(1, width - 30),
       randomInt(0, 200),
       DEBRIS_HEIGHT,
       DEBRIS_WIDTH,
       {
-        frictionAir: getRandomDecimal(0.01, 0.5),
+        frictionAir: getRandomDecimal(0.01, 0.05),
         label: 'debris',
       }
     );
@@ -119,7 +112,7 @@ const _getEntities = () => {
     },
   };
 
-  for (let x = 0; x <= 2; x++) {
+  for (let x = 0; x <= obstacleCount; x++) {
     Object.assign(entities, {
       ['debris_' + x]: {
         body: debris[x],
@@ -169,7 +162,18 @@ _getEntities();
 
 _setupCollisionHandler();
 
-console.log('world', world);
+const reset = () => {
+  debris.forEach((debris) => {
+    Matter.Body.set(debris, {
+      isStatic: false,
+    });
+    Matter.Body.setPosition(debris, {
+      x: randomInt(1, width - 30),
+      y: randomInt(0, 200),
+    });
+  });
+};
+
 export default function App() {
   const [data, setData] = useState({});
   const [subscription, setSubscription] = useState(false);
