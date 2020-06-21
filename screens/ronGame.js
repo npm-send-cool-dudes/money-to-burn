@@ -7,8 +7,8 @@ import {
   StatusBar,
   View,
   ImageBackground,
-  Button,
 } from 'react-native';
+import { Button } from 'react-native-elements';
 
 import { GameEngine } from 'react-native-game-engine';
 import Matter from 'matter-js';
@@ -47,13 +47,13 @@ const world = engine.world;
 
 let Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
-  engine.world.gravity.y = 0.2;
+  engine.world.gravity.y = 0.1;
   Matter.Engine.update(engine, time.delta);
   return entities;
 };
 
 let debris = [];
-let obstacleCount = 1;
+let obstacleCount = 4;
 
 const _addObjectsToWorld = () => {
   let objects = [ball, floor];
@@ -107,7 +107,7 @@ const _getEntities = () => {
         body: debris[x],
         size: [DEBRIS_WIDTH, DEBRIS_HEIGHT],
         color: randomColor({
-          luminosity: 'dark',
+          luminosity: 'light',
         }),
         renderer: Box,
       },
@@ -167,10 +167,12 @@ export default function App(props) {
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
 
-  const [gravity, setGravity] = useState(0.2);
+  const [gravity, setGravity] = useState(0.1);
+
+  const gravityIncrementer = 0.05;
 
   const increaseGravity = () => {
-    setGravity(gravity + 0.1);
+    setGravity(gravity + gravityIncrementer);
     Physics = (entities, { time }) => {
       let engine = entities['physics'].engine;
       engine.world.gravity.y = gravity;
@@ -180,8 +182,8 @@ export default function App(props) {
   };
 
   const decreaseGravity = () => {
-    if (gravity > 0) {
-      setGravity(gravity - 0.1);
+    if (gravity > 0.01) {
+      setGravity(gravity - gravityIncrementer);
       Physics = (entities, { time }) => {
         let engine = entities['physics'].engine;
         engine.world.gravity.y = gravity;
@@ -266,8 +268,18 @@ export default function App(props) {
             );
           })}
       </GameEngine>
-      <Button title="Increase!" onPress={increaseGravity} />
-      <Button title="Decrease!" onPress={decreaseGravity} />
+      <View style={styles.controls}>
+        <Button
+          buttonStyle={styles.decrease}
+          title="Decrease!"
+          onPress={decreaseGravity}
+        />
+        <Button
+          buttonStyle={styles.increase}
+          title="Increase!"
+          onPress={increaseGravity}
+        />
+      </View>
     </ImageBackground>
   );
 }
@@ -282,5 +294,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 5,
     color: 'white',
+  },
+  controls: {
+    flexDirection: 'row',
+  },
+  increase: {
+    backgroundColor: 'green',
+    width: width / 2,
+    height: height / 10,
+  },
+  decrease: {
+    backgroundColor: 'red',
+    width: width / 2,
+    height: height / 10,
   },
 });
