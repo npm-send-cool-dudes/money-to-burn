@@ -7,6 +7,7 @@ import {
   StatusBar,
   View,
   ImageBackground,
+  Button,
 } from 'react-native';
 
 import { GameEngine } from 'react-native-game-engine';
@@ -23,8 +24,6 @@ import getRandomDecimal from './utilities/getRandomDecimal';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useObjectVal } from 'react-firebase-hooks/database';
-
-import GameTimer from './utilities/timer';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -46,9 +45,9 @@ const floor = Matter.Bodies.rectangle(width / 2, height, width, 10, {
 const engine = Matter.Engine.create({ enableSleeping: false });
 const world = engine.world;
 
-const Physics = (entities, { time }) => {
+let Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
-  engine.world.gravity.y = 0.01;
+  engine.world.gravity.y = 0.2;
   Matter.Engine.update(engine, time.delta);
   return entities;
 };
@@ -168,7 +167,29 @@ export default function App(props) {
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
 
-  //   const [gravity, setGravity] = useState(0.5);
+  const [gravity, setGravity] = useState(0.2);
+
+  const increaseGravity = () => {
+    setGravity(gravity + 0.1);
+    Physics = (entities, { time }) => {
+      let engine = entities['physics'].engine;
+      engine.world.gravity.y = gravity;
+      Matter.Engine.update(engine, time.delta);
+      return entities;
+    };
+  };
+
+  const decreaseGravity = () => {
+    if (gravity > 0) {
+      setGravity(gravity - 0.1);
+      Physics = (entities, { time }) => {
+        let engine = entities['physics'].engine;
+        engine.world.gravity.y = gravity;
+        Matter.Engine.update(engine, time.delta);
+        return entities;
+      };
+    }
+  };
 
   useEffect(() => {
     _setupCollisionHandler(roomName, uid);
@@ -245,6 +266,8 @@ export default function App(props) {
             );
           })}
       </GameEngine>
+      <Button title="Increase!" onPress={increaseGravity} />
+      <Button title="Decrease!" onPress={decreaseGravity} />
     </ImageBackground>
   );
 }
