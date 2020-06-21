@@ -122,7 +122,7 @@ const _setupCollisionHandler = (roomName, uid) => {
       // need to find way to grab uid and roomname when outside of the component...
       const currentScoreRef = db
         .database()
-        .ref(`/Rooms/${roomName}/Game/Scores/${uid}/`);
+        .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
       currentScoreRef.transaction((currentScore = 0) => {
         return currentScore + 1;
       });
@@ -130,8 +130,8 @@ const _setupCollisionHandler = (roomName, uid) => {
 
     if (objA === 'ball' && objB === 'debris') {
       db.database()
-        .ref(`/Rooms/${roomName}/Game/Scores/${uid}/`)
-        .update({ aliveStatus: false });
+        .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+        .update({ [uid]: false });
       Alert.alert('Game Over', 'You lose...');
       debris.forEach((debrisItem) => {
         Matter.Body.set(debrisItem, {
@@ -141,10 +141,8 @@ const _setupCollisionHandler = (roomName, uid) => {
     }
   });
 };
-
 _addObjectsToWorld();
 _getEntities();
-_setupCollisionHandler(roomName, uid);
 
 export default function App(props) {
   const [data, setData] = useState({});
@@ -154,11 +152,18 @@ export default function App(props) {
   const roomName = props.route.params.roomName;
   //   const [gravity, setGravity] = useState(0.5);
 
-  //set inital scoring for person and subscribe to accelerometer lateral motion
+  useEffect(() => {
+    _setupCollisionHandler(roomName, uid);
+  }, []);
+
+  //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
   useEffect(() => {
     db.database()
-      .ref(`/Rooms/${roomName}/Game/Scores/${uid}`)
-      .update({ score: 0, aliveStatus: true });
+      .ref(`/Rooms/${roomName}/Game/Scores/`)
+      .update({ [uid]: 0 });
+    db.database()
+      .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+      .update({ [uid]: true });
     _toggle();
   }, []);
 
