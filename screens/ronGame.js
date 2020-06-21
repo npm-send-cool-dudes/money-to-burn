@@ -14,6 +14,7 @@ import getRandomDecimal from './utilities/getRandomDecimal';
 
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useObjectVal } from 'react-firebase-hooks/database';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -37,7 +38,7 @@ const world = engine.world;
 
 const Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
-  engine.world.gravity.y = 0.1;
+  engine.world.gravity.y = 0.01;
   Matter.Engine.update(engine, time.delta);
   return entities;
 };
@@ -119,7 +120,6 @@ const _setupCollisionHandler = (roomName, uid) => {
         y: randomInt(0, 200),
       });
 
-      // need to find way to grab uid and roomname when outside of the component...
       const currentScoreRef = db
         .database()
         .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
@@ -150,6 +150,14 @@ export default function App(props) {
   const [user, loading, error] = useAuthState(db.auth());
   const uid = user.uid;
   const roomName = props.route.params.roomName;
+
+  const [allScores] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/Game/Scores`)
+  );
+  const [aliveStatusRoom] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
+  );
+
   //   const [gravity, setGravity] = useState(0.5);
 
   useEffect(() => {
@@ -197,7 +205,7 @@ export default function App(props) {
   let { x, y, z } = data;
 
   //updates ball position based off accelerometer data
-  if (x && y) {
+  if (y) {
     Matter.Body.setPosition(ball, {
       x: width / 2 - 200 * Number(x),
       y: height - height / 4,
