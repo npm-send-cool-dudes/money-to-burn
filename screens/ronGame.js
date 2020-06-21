@@ -158,6 +158,7 @@ _getEntities();
 export default function App(props) {
   const [data, setData] = useState({});
   const [subscription, setSubscription] = useState(false);
+  const [winner, setWinner] = useState();
   const [user, loading, error] = useAuthState(db.auth());
   const uid = user.uid;
   const roomName = props.route.params.roomName;
@@ -168,6 +169,29 @@ export default function App(props) {
   const [aliveStatusRoom] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
+
+  console.log('alive', aliveStatusRoom);
+
+  useEffect(() => {
+    allScores &&
+      Object.keys(allScores).map((userKey) => {
+        if (allScores[userKey] >= 10) {
+          setWinner(userKey);
+        }
+      });
+    //also stop game engine
+  }, [allScores]);
+
+  useEffect(() => {
+    if (aliveStatusRoom && !Object.values(aliveStatusRoom).includes(true)) {
+      let scores = Object.entries(allScores);
+      let highest;
+      // scores.map(user => {
+      //   if()
+      // })
+    }
+    //also stop game engine
+  }, [aliveStatusRoom]);
 
   const [gravity, setGravity] = useState(0.1);
 
@@ -277,6 +301,7 @@ export default function App(props) {
             );
           })}
       </GameEngine>
+      {winner && <Text style={styles.winner}>winner is {winner}!!</Text>}
       <View style={styles.controls}>
         <Button
           buttonStyle={styles.decrease}
@@ -316,5 +341,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     width: width / 2,
     height: height / 10,
+  },
+  winner: {
+    color: 'white',
+    fontSize: 30,
+    justifyContent: 'center',
+    flex: 1,
   },
 });
