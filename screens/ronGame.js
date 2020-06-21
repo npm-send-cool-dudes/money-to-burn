@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, Dimensions, Alert, StatusBar } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  Dimensions,
+  Alert,
+  StatusBar,
+  ImageBackground,
+  View,
+} from 'react-native';
 
 import { GameEngine } from 'react-native-game-engine';
 import Matter from 'matter-js';
@@ -216,48 +224,28 @@ export default function App(props) {
   }
 
   return (
-    <GameEngine
-      style={styles.container}
-      systems={[Physics]}
-      entities={_getEntities()}
-    >
-      <StatusBar hidden={true} />
-      {allScores &&
-        Object.keys(allScores).map((userKey) => {
-          return (
-            <Text key={userKey} style={styles.text}>
-              {userKey}: {allScores[userKey]}
-            </Text>
-          );
-        })}
-    </GameEngine>
+    <View style={styles.container}>
+      <GameEngine systems={[Physics]} entities={_getEntities()}>
+        <StatusBar hidden={true} />
+        {allScores &&
+          Object.keys(allScores).map((userKey) => {
+            return (
+              <Text key={userKey} style={styles.text}>
+                {userKey}: {allScores[userKey]}
+              </Text>
+            );
+          })}
+      </GameEngine>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    marginTop: 15,
-  },
-  button: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#eee',
-    padding: 10,
-  },
-  middleButton: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: '#ccc',
-  },
-  sensor: {
-    marginTop: 45,
-    paddingHorizontal: 10,
+  container: {
+    backgroundColor: 'pink',
   },
   text: {
     textAlign: 'center',
-    padding: 20,
+    padding: 5,
   },
 });
