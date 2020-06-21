@@ -5,8 +5,8 @@ import {
   Dimensions,
   Alert,
   StatusBar,
-  ImageBackground,
   View,
+  ImageBackground,
 } from 'react-native';
 
 import { GameEngine } from 'react-native-game-engine';
@@ -224,7 +224,14 @@ export default function App(props) {
   }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      style={styles.backgroundImage}
+      resizeMode="stretch"
+      source={{
+        uri:
+          'https://i.pinimg.com/originals/c9/46/27/c94627ca6c5147bc87157df09027ded3.gif',
+      }}
+    >
       <GameEngine systems={[Physics]} entities={_getEntities()}>
         <StatusBar hidden={true} />
         {allScores &&
@@ -236,16 +243,19 @@ export default function App(props) {
             );
           })}
       </GameEngine>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'pink',
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   text: {
     textAlign: 'center',
     padding: 5,
+    color: 'white',
   },
 });
