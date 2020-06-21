@@ -13,6 +13,7 @@ import JoinRoom from './screens/joinRoom';
 import ClikBait from './screens/clikBait';
 
 import RonGame from './screens/ronGame';
+import Timer from './screens/utilities/timer';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,8 @@ export default function App() {
     <ThemeProvider>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen name="Timer" component={Timer} />
+
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="GameSelector" component={GameSelector} />
           <Stack.Screen name="WaitingRoom" component={WaitingRoom} />
