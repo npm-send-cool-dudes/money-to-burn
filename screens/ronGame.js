@@ -20,6 +20,8 @@ import randomInt from 'random-int';
 import randomColor from 'randomcolor';
 import getRandomDecimal from './utilities/getRandomDecimal';
 
+import { db } from '../firebaseConfig';
+
 const { width, height } = Dimensions.get('screen');
 
 const BALL_SIZE = 20;
@@ -64,7 +66,7 @@ const Physics = (entities, { time }) => {
 };
 
 let debris = [];
-let obstacleCount = 4;
+let obstacleCount = 2;
 
 const _addObjectsToWorld = () => {
   let objects = [ball, floor];
@@ -77,7 +79,7 @@ const _addObjectsToWorld = () => {
       DEBRIS_HEIGHT,
       DEBRIS_WIDTH,
       {
-        frictionAir: getRandomDecimal(0.01, 0.05),
+        frictionAir: getRandomDecimal(0.015, 0.04),
         label: 'debris',
       }
     );
@@ -140,13 +142,18 @@ const _setupCollisionHandler = () => {
         y: randomInt(0, 200),
       });
 
-      //   this.setState((state) => ({
-      //     score: state.score + 1,
-      //   }));
-      //   console.log('point!');
+      const currentScoreRef = db
+        .database()
+        .ref(`/Rooms/1234/Game/FZero/playerList/1/score`);
+      currentScoreRef.transaction((currentScore = 0) => {
+        return currentScore + 1;
+      });
     }
 
     if (objA === 'ball' && objB === 'debris') {
+      db.database()
+        .ref(`/Rooms/1234/Game/FZero/playerList/1/`)
+        .update({ aliveStatus: false });
       Alert.alert('Game Over', 'You lose...');
       debris.forEach((debrisItem) => {
         Matter.Body.set(debrisItem, {
@@ -162,24 +169,15 @@ _getEntities();
 
 _setupCollisionHandler();
 
-const reset = () => {
-  debris.forEach((debris) => {
-    Matter.Body.set(debris, {
-      isStatic: false,
-    });
-    Matter.Body.setPosition(debris, {
-      x: randomInt(1, width - 30),
-      y: randomInt(0, 200),
-    });
-  });
-};
-
 export default function App() {
   const [data, setData] = useState({});
   const [subscription, setSubscription] = useState(false);
   //   const [gravity, setGravity] = useState(0.5);
 
   useEffect(() => {
+    db.database()
+      .ref(`/Rooms/1234/Game/FZero/playerList/1`)
+      .update({ score: 0, aliveStatus: true });
     _toggle();
   }, []);
 
@@ -195,14 +193,6 @@ export default function App() {
     } else {
       _subscribe();
     }
-  };
-
-  const _slow = () => {
-    Accelerometer.setUpdateInterval(1000);
-  };
-
-  const _fast = () => {
-    Accelerometer.setUpdateInterval(15);
   };
 
   const _subscribe = () => {
@@ -236,14 +226,6 @@ export default function App() {
       <StatusBar hidden={true} />
     </GameEngine>
   );
-}
-
-function round(n) {
-  if (!n) {
-    return 0;
-  }
-
-  return Math.floor(n * 100) / 100;
 }
 
 const styles = StyleSheet.create({
