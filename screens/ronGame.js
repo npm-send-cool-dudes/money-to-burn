@@ -23,7 +23,9 @@ import getRandomDecimal from './utilities/getRandomDecimal';
 
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useObjectVal } from 'react-firebase-hooks/database';
+import { useObjectVal, useListVals } from 'react-firebase-hooks/database';
+
+import roomCleanUp from '../utilFuncs/roomCleanUp';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -162,6 +164,10 @@ export default function App(props) {
   const [user, loading, error] = useAuthState(db.auth());
   const uid = user.uid;
   const roomName = props.route.params.roomName;
+  const navigation = props.navigation;
+
+  let playerListData = db.database().ref(`/Rooms/${roomName}/playerList`);
+  const [playerList] = useListVals(playerListData);
 
   const [allScores] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/Scores`)
@@ -314,6 +320,14 @@ export default function App(props) {
             </Text>
           ))}
         </Text>
+      )}
+      {winner && (
+        <Button
+          title="Go Home"
+          onPress={() => roomCleanUp(navigation, roomName, uid, playerList)}
+        >
+          GO HOME!
+        </Button>
       )}
       <View style={styles.controls}>
         <Button
