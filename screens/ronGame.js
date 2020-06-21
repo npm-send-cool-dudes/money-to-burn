@@ -45,7 +45,7 @@ const floor = Matter.Bodies.rectangle(width / 2, height, width, 10, {
 const engine = Matter.Engine.create({ enableSleeping: false });
 const world = engine.world;
 
-const startGravity = 0.1;
+const startGravity = 0.0;
 
 let Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
@@ -55,7 +55,7 @@ let Physics = (entities, { time }) => {
 };
 
 let debris = [];
-let obstacleCount = 4;
+let obstacleCount = 1;
 
 const _addObjectsToWorld = () => {
   let objects = [ball, floor];
@@ -140,10 +140,10 @@ const _setupCollisionHandler = (roomName, uid) => {
     }
 
     if (objA === 'ball' && objB === 'debris') {
+      Alert.alert('Game Over', 'You lose...');
       db.database()
         .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
         .update({ [uid]: false });
-      Alert.alert('Game Over', 'You lose...');
       debris.forEach((debrisItem) => {
         Matter.Body.set(debrisItem, {
           isStatic: true,
@@ -170,13 +170,12 @@ export default function App(props) {
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
 
-  console.log('alive', aliveStatusRoom);
-
+  //win conditions are either first to a set score or highest score(s) if all are dead
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
         if (allScores[userKey] >= 10) {
-          setWinner(userKey);
+          setWinner([userKey]);
         }
       });
     //also stop game engine
@@ -184,11 +183,21 @@ export default function App(props) {
 
   useEffect(() => {
     if (aliveStatusRoom && !Object.values(aliveStatusRoom).includes(true)) {
-      let scores = Object.entries(allScores);
-      let highest;
-      // scores.map(user => {
-      //   if()
-      // })
+      const scores = Object.entries(allScores);
+      const winnersAndScores = [];
+      scores.forEach((player, index) => {
+        if (index === 0) {
+          winnersAndScores.push(player);
+        } else {
+          if (player[1] > winnersAndScores[0][1]) {
+            winnersAndScores = [player];
+          } else if (player[1] === winnersAndScores[0][1]) {
+            winnersAndScores.push(player);
+          }
+        }
+      });
+      const winners = winnersAndScores.map((p) => p[0]);
+      setWinner(winners);
     }
     //also stop game engine
   }, [aliveStatusRoom]);
@@ -291,7 +300,7 @@ export default function App(props) {
       }}
     >
       <GameEngine systems={[Physics]} entities={_getEntities()}>
-        <StatusBar hidden={true} />
+        {/* <StatusBar hidden={true} /> */}
         {allScores &&
           Object.keys(allScores).map((userKey) => {
             return (
@@ -301,7 +310,16 @@ export default function App(props) {
             );
           })}
       </GameEngine>
-      {winner && <Text style={styles.winner}>winner is {winner}!!</Text>}
+      {winner && (
+        <Text style={styles.winner}>
+          winner is{' '}
+          {winner.map((player) => (
+            <Text key={player} style={styles.winner}>
+              {player}
+            </Text>
+          ))}
+        </Text>
+      )}
       <View style={styles.controls}>
         <Button
           buttonStyle={styles.decrease}
@@ -321,7 +339,7 @@ export default function App(props) {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover',
+    // resizeMode: 'cover',
     justifyContent: 'center',
   },
   text: {
