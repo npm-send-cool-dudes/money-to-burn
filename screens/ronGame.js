@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-  Alert,
-  StatusBar,
-} from 'react-native';
-import { Accelerometer } from 'expo-sensors';
+import { StyleSheet, Text, Dimensions, Alert, StatusBar } from 'react-native';
 
 import { GameEngine } from 'react-native-game-engine';
 import Matter from 'matter-js';
+import { Accelerometer } from 'expo-sensors';
 
 import Circle from './utilities/circle';
 import Box from './utilities/box';
@@ -21,6 +13,7 @@ import randomColor from 'randomcolor';
 import getRandomDecimal from './utilities/getRandomDecimal';
 
 import { db } from '../firebaseConfig';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -28,12 +21,8 @@ const BALL_SIZE = 20;
 const DEBRIS_HEIGHT = 70;
 const DEBRIS_WIDTH = 20;
 
-const ballSettings = {
-  isStatic: true,
-};
-
 const ball = Matter.Bodies.circle(0, height - 30, BALL_SIZE, {
-  ...ballSettings,
+  isStatic: true,
   label: 'ball',
 });
 
@@ -43,30 +32,18 @@ const floor = Matter.Bodies.rectangle(width / 2, height, width, 10, {
   label: 'floor',
 });
 
-const boxSize = Math.trunc(Math.max(width, height) * 0.075);
-
-// const floor = Matter.Bodies.rectangle(
-//   width / 2,
-//   height - boxSize / 2,
-//   width,
-//   boxSize,
-//   { isStatic: true }
-// );
-
 const engine = Matter.Engine.create({ enableSleeping: false });
 const world = engine.world;
 
-// Matter.World.add(world, [initialBox, floor]);
-
 const Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
-  engine.world.gravity.y = 0.3;
+  engine.world.gravity.y = 0.1;
   Matter.Engine.update(engine, time.delta);
   return entities;
 };
 
 let debris = [];
-let obstacleCount = 2;
+let obstacleCount = 1;
 
 const _addObjectsToWorld = () => {
   let objects = [ball, floor];
@@ -129,7 +106,7 @@ const _getEntities = () => {
   return entities;
 };
 
-const _setupCollisionHandler = () => {
+const _setupCollisionHandler = (roomName, uid) => {
   Matter.Events.on(engine, 'collisionStart', (event) => {
     var pairs = event.pairs;
 
@@ -142,9 +119,10 @@ const _setupCollisionHandler = () => {
         y: randomInt(0, 200),
       });
 
+      // need to find way to grab uid and roomname when outside of the component...
       const currentScoreRef = db
         .database()
-        .ref(`/Rooms/1234/Game/FZero/playerList/1/score`);
+        .ref(`/Rooms/${roomName}/Game/Scores/${uid}/`);
       currentScoreRef.transaction((currentScore = 0) => {
         return currentScore + 1;
       });
@@ -152,7 +130,7 @@ const _setupCollisionHandler = () => {
 
     if (objA === 'ball' && objB === 'debris') {
       db.database()
-        .ref(`/Rooms/1234/Game/FZero/playerList/1/`)
+        .ref(`/Rooms/${roomName}/Game/Scores/${uid}/`)
         .update({ aliveStatus: false });
       Alert.alert('Game Over', 'You lose...');
       debris.forEach((debrisItem) => {
@@ -164,18 +142,22 @@ const _setupCollisionHandler = () => {
   });
 };
 
-_addObjectsToWorld(ball);
+_addObjectsToWorld();
 _getEntities();
-_setupCollisionHandler();
+_setupCollisionHandler(roomName, uid);
 
-export default function App() {
+export default function App(props) {
   const [data, setData] = useState({});
   const [subscription, setSubscription] = useState(false);
+  const [user, loading, error] = useAuthState(db.auth());
+  const uid = user.uid;
+  const roomName = props.route.params.roomName;
   //   const [gravity, setGravity] = useState(0.5);
 
+  //set inital scoring for person and subscribe to accelerometer lateral motion
   useEffect(() => {
     db.database()
-      .ref(`/Rooms/1234/Game/FZero/playerList/1`)
+      .ref(`/Rooms/${roomName}/Game/Scores/${uid}`)
       .update({ score: 0, aliveStatus: true });
     _toggle();
   }, []);
@@ -209,6 +191,7 @@ export default function App() {
 
   let { x, y, z } = data;
 
+  //updates ball position based off accelerometer data
   if (x && y) {
     Matter.Body.setPosition(ball, {
       x: width / 2 - 200 * Number(x),
@@ -223,6 +206,7 @@ export default function App() {
       entities={_getEntities()}
     >
       <StatusBar hidden={true} />
+      <Text style={styles.text}>Score</Text>
     </GameEngine>
   );
 }
@@ -251,5 +235,6 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
+    padding: 20,
   },
 });

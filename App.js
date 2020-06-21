@@ -25,12 +25,6 @@ export default function App() {
     <ThemeProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen
-            name="Ron"
-            component={RonGame}
-            options={{ headerShown: false }}
-          />
-
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="GameSelector" component={GameSelector} />
           <Stack.Screen name="WaitingRoom" component={WaitingRoom} />
@@ -39,6 +33,13 @@ export default function App() {
           {/* gameListStart */}
           {/* clickBait was labeled ClikBait which broke the app */}
           <Stack.Screen name="clikBait" component={ClikBait} />
+
+          {/* change name when finalized */}
+          <Stack.Screen
+            name="fzero"
+            component={RonGame}
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

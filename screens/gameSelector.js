@@ -19,8 +19,13 @@ export default function GameSelector({ navigation }) {
   console.log('gameslist', gamesList);
   return (
     <ScrollView style={styles.background}>
-      <GameCard nav={navigation} gameName={gamesList[0]} />
-      <GameCard nav={navigation} gameName={gamesList[1]} />
+      {gamesList.map((game, index) => (
+        <GameCard
+          key={gamesList[index]}
+          nav={navigation}
+          gameName={gamesList[index]}
+        />
+      ))}
     </ScrollView>
   );
 }
