@@ -198,7 +198,6 @@ export default function App(props) {
       Object.keys(allScores).map((userKey) => {
         if (allScores[userKey] >= 10) {
           _unsubscribe();
-
           reset();
           setWinner([userKey]);
         }
@@ -222,7 +221,6 @@ export default function App(props) {
       });
       const winners = winnersAndScores.map((p) => p[0]);
       _unsubscribe();
-
       reset();
       setWinner(winners);
     }
@@ -255,6 +253,12 @@ export default function App(props) {
   };
 
   useEffect(() => {
+    Physics = (entities, { time }) => {
+      let engine = entities['physics'].engine;
+      engine.world.gravity.y = startGravity;
+      Matter.Engine.update(engine, time.delta);
+      return entities;
+    };
     _setupCollisionHandler(roomName, uid);
   }, []);
 
@@ -266,7 +270,7 @@ export default function App(props) {
     db.database()
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
-    _subscribe();
+    _toggle();
   }, []);
 
   useEffect(() => {
@@ -275,13 +279,13 @@ export default function App(props) {
     };
   }, []);
 
-  // const _toggle = () => {
-  //   if (subscription) {
-  //     _unsubscribe();
-  //   } else {
-  //     _subscribe();
-  //   }
-  // };
+  const _toggle = () => {
+    if (subscription) {
+      _unsubscribe();
+    } else {
+      _subscribe();
+    }
+  };
 
   const _subscribe = () => {
     console.log('subscripted');
