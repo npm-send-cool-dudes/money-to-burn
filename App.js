@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ThemeProvider, Button } from 'react-native-elements';
+import { ThemeProvider, Button, Text } from 'react-native-elements';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { db } from './firebaseConfig';
 
@@ -11,27 +11,31 @@ import GameSelector from './screens/gameSelector';
 import WaitingRoom from './screens/waitingRoom';
 import JoinRoom from './screens/joinRoom';
 import ClikBait from './screens/clikBait';
+import * as Font from 'expo-font';
+import { AppLoading } from 'expo';
+
+const getFonts = () =>
+  Font.loadAsync({
+    shortstack: require('./assets/fonts/ShortStack-Regular.ttf'),
+  });
 
 const Stack = createStackNavigator();
 
-
 const theme = {
   Button: {
-    titleStyle: {
-      color: 'red',
-    },
     raised: true,
   },
-  Text: {
-    fontSize: 30,
-  }
 };
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const [user, loading, error] = useAuthState(db.auth());
-
   console.log('home login id', user && user.uid);
-
+  if (!fontsLoaded) {
+    return (
+      <AppLoading startAsync={getFonts} onFinish={() => setFontsLoaded(true)} />
+    );
+  }
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>

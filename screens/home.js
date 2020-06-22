@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
     fontSize: 45,
     fontWeight: 'bold',
     color: 'black',
+    // fontFamily: 'shortstack',
     transform: [{ rotate: '-38deg' }],
   },
   headerBox: {
