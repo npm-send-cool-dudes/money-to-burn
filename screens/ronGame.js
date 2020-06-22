@@ -156,6 +156,20 @@ const _setupCollisionHandler = (roomName, uid) => {
   });
 };
 
+const reset = () => {
+  debris.forEach((debris) => {
+    // loop through all the blocks
+    Matter.Body.set(debris, {
+      isStatic: false, // make the block susceptible to gravity again
+    });
+    Matter.Body.setPosition(debris, {
+      // set new position for the block
+      x: randomInt(1, width - 30),
+      y: randomInt(0, 200),
+    });
+  });
+};
+
 _addObjectsToWorld();
 _getEntities();
 
@@ -185,6 +199,7 @@ export default function App(props) {
         if (allScores[userKey] >= 10) {
           _unsubscribe();
 
+          reset();
           setWinner([userKey]);
         }
       });
@@ -208,6 +223,7 @@ export default function App(props) {
       const winners = winnersAndScores.map((p) => p[0]);
       _unsubscribe();
 
+      reset();
       setWinner(winners);
     }
   }, [aliveStatusRoom]);
@@ -250,7 +266,7 @@ export default function App(props) {
     db.database()
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
-    _toggle();
+    _subscribe();
   }, []);
 
   useEffect(() => {
@@ -259,15 +275,16 @@ export default function App(props) {
     };
   }, []);
 
-  const _toggle = () => {
-    if (subscription) {
-      _unsubscribe();
-    } else {
-      _subscribe();
-    }
-  };
+  // const _toggle = () => {
+  //   if (subscription) {
+  //     _unsubscribe();
+  //   } else {
+  //     _subscribe();
+  //   }
+  // };
 
   const _subscribe = () => {
+    console.log('subscripted');
     //set how smooth player control of sprite is
     Accelerometer.setUpdateInterval(100);
 
@@ -279,6 +296,8 @@ export default function App(props) {
   };
 
   const _unsubscribe = () => {
+    console.log('unsciripted');
+
     subscription && subscription.remove();
     setSubscription(null);
   };
