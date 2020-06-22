@@ -4,7 +4,6 @@ import {
   Text,
   Dimensions,
   Alert,
-  StatusBar,
   View,
   ImageBackground,
 } from 'react-native';
@@ -20,13 +19,13 @@ import Box from './utilities/box';
 import randomInt from 'random-int';
 import randomColor from 'randomcolor';
 import getRandomDecimal from './utilities/getRandomDecimal';
+import roomCleanUp from '../utilFuncs/roomCleanUp';
 
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useObjectVal, useListVals } from 'react-firebase-hooks/database';
 
-import roomCleanUp from '../utilFuncs/roomCleanUp';
-
+//setup game engine
 const { width, height } = Dimensions.get('screen');
 
 const BALL_SIZE = 20;
@@ -56,8 +55,8 @@ let Physics = (entities, { time }) => {
   return entities;
 };
 
-let debris = [];
-let obstacleCount = 1;
+const debris = [];
+const obstacleCount = 3;
 
 const _addObjectsToWorld = () => {
   let objects = [ball, floor];
@@ -182,7 +181,7 @@ export default function App(props) {
   const roomName = props.route.params.roomName;
   const navigation = props.navigation;
 
-  let playerListData = db.database().ref(`/Rooms/${roomName}/playerList`);
+  const playerListData = db.database().ref(`/Rooms/${roomName}/playerList`);
   const [playerList] = useListVals(playerListData);
 
   const [allScores] = useObjectVal(
@@ -198,7 +197,6 @@ export default function App(props) {
       Object.keys(allScores).map((userKey) => {
         if (allScores[userKey] >= 10) {
           _unsubscribe();
-          reset();
           setWinner([userKey]);
         }
       });
@@ -221,11 +219,11 @@ export default function App(props) {
       });
       const winners = winnersAndScores.map((p) => p[0]);
       _unsubscribe();
-      reset();
       setWinner(winners);
     }
   }, [aliveStatusRoom]);
 
+  //utilities to change gravity of game
   const [gravity, setGravity] = useState(0.1);
 
   const gravityIncrementer = 0.05;
@@ -271,6 +269,7 @@ export default function App(props) {
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
     _toggle();
+    reset();
   }, []);
 
   useEffect(() => {
