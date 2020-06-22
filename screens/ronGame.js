@@ -117,6 +117,7 @@ const _getEntities = () => {
       },
     });
   }
+
   return entities;
 };
 
@@ -154,6 +155,7 @@ const _setupCollisionHandler = (roomName, uid) => {
     }
   });
 };
+
 _addObjectsToWorld();
 _getEntities();
 
@@ -181,10 +183,11 @@ export default function App(props) {
     allScores &&
       Object.keys(allScores).map((userKey) => {
         if (allScores[userKey] >= 10) {
+          _unsubscribe();
+
           setWinner([userKey]);
         }
       });
-    //also stop game engine
   }, [allScores]);
 
   useEffect(() => {
@@ -203,8 +206,9 @@ export default function App(props) {
         }
       });
       const winners = winnersAndScores.map((p) => p[0]);
+      _unsubscribe();
+
       setWinner(winners);
-      //also stop game engine
     }
   }, [aliveStatusRoom]);
 
