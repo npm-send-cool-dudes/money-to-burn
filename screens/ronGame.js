@@ -120,6 +120,7 @@ const _getEntities = () => {
   return entities;
 };
 
+//reset position of all blocks
 const reset = () => {
   debris.forEach((debris) => {
     // loop through all the blocks
@@ -156,6 +157,40 @@ export default function App(props) {
   const [aliveStatusRoom] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
+
+  //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
+  useEffect(() => {
+    db.database()
+      .ref(`/Rooms/${roomName}/Game/Scores/`)
+      .update({ [uid]: 0 });
+    db.database()
+      .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+      .update({ [uid]: true });
+    _toggle();
+    _setupCollisionHandler(engine, width, roomName, uid, debris);
+  }, []);
+
+  const _toggle = () => {
+    if (subscription) {
+      _unsubscribe();
+    } else {
+      _subscribe();
+    }
+  };
+
+  const _subscribe = () => {
+    Accelerometer.setUpdateInterval(100);
+    setSubscription(
+      Accelerometer.addListener((accelerometerData) => {
+        setData(accelerometerData);
+      })
+    );
+  };
+
+  const _unsubscribe = () => {
+    subscription && subscription.remove();
+    setSubscription(null);
+  };
 
   //win conditions are either first to a set score or highest score(s) if all are dead
   const pointsToWin = 30;
@@ -217,6 +252,7 @@ export default function App(props) {
       };
     }
   };
+
   //reset gravity to default on each new game
   useEffect(() => {
     Physics = (entities, { time }) => {
@@ -227,20 +263,10 @@ export default function App(props) {
     };
   }, []);
 
-  //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
-  useEffect(() => {
-    db.database()
-      .ref(`/Rooms/${roomName}/Game/Scores/`)
-      .update({ [uid]: 0 });
-    db.database()
-      .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
-      .update({ [uid]: true });
-    _toggle();
-    _setupCollisionHandler(engine, width, roomName, uid, debris);
-  }, []);
-
+  //cleanup after game ends
   useEffect(() => {
     return () => {
+      //reset velocity of each block after game ends since they get reused.
       debris.forEach((debrisItem) => {
         Matter.Body.set(debrisItem, {
           velocity: { x: 0, y: 0 },
@@ -251,31 +277,8 @@ export default function App(props) {
     };
   }, []);
 
-  const _toggle = () => {
-    if (subscription) {
-      _unsubscribe();
-    } else {
-      _subscribe();
-    }
-  };
-
-  const _subscribe = () => {
-    Accelerometer.setUpdateInterval(100);
-    setSubscription(
-      Accelerometer.addListener((accelerometerData) => {
-        setData(accelerometerData);
-      })
-    );
-  };
-
-  const _unsubscribe = () => {
-    subscription && subscription.remove();
-    setSubscription(null);
-  };
-
-  let { x, y, z } = data;
-
   //updates ball position based off accelerometer data
+  let { x, y, z } = data;
   if (y) {
     Matter.Body.setPosition(ball, {
       x: width / 2 - 200 * Number(x),
