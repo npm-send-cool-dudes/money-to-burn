@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { Button } from 'react-native-elements';
 
 const QRcode = {
   uri:
@@ -19,9 +20,6 @@ export default function WaitingRoom(props) {
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
-  console.log(props);
-  console.log('gameName is', gameName);
-  console.log('roomName is ', roomName);
 
   let playerStatus = db
     .database()
@@ -36,15 +34,17 @@ export default function WaitingRoom(props) {
   let roomStatusData = db.database().ref(`/Rooms/${roomName}/status`);
   const [roomStatus] = useObjectVal(roomStatusData);
 
-  console.log(roomStatus);
-
   //grabbing nextGame from the DB
-  let nextGameData = db.database().ref(`/Rooms/${roomName}/nextGame`);
+  let nextGameData = db.database().ref(`/Rooms/${roomName}/Game/Name`);
   const [nextGame] = useObjectVal(nextGameData);
+
+  let gameObj = db.database().ref(`/GamesList/${gameName}`);
+  const [gameRules] = useObjectVal(gameObj);
 
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
     //for when users join this game, roomName does not exist so users don't automatically navigate to the right game
+    console.log(roomName);
     navigation.navigate(nextGame, { roomName: roomName });
   }
 
@@ -59,7 +59,14 @@ export default function WaitingRoom(props) {
     db.database().ref(`/Rooms/${roomName}`).update({ status: false });
     //if you join the room, you don't have access to the gameName prop, so i set this up so when the first user creates the game, it gets pushed to the room. This is where all clients can access the next game for now. THis will be updates as we move the actual game rules onto the room object
     gameName &&
-      db.database().ref(`/Rooms/${roomName}`).update({ nextGame: gameName });
+      db.database().ref(`/Rooms/${roomName}/Game`).update({ Name: gameName });
+
+    //TODO i added the scoreboard functionality on here. I decided to undo it as it does make more sense to add the scores based on the game. What if snake doesn't use scores? it is here though in case somebody decided to go that route.
+    // uid &&
+    //   db
+    //     .database()
+    //     .ref(`/Rooms/${roomName}/Game/Scores`)
+    //     .update({ [uid]: 0 });
 
     uid &&
       db
@@ -68,6 +75,15 @@ export default function WaitingRoom(props) {
         .update({ uid: uid, status: false });
     //why are we adding a UID to our UID object on playerList? is this where we'll eventually store player names?
   }, [uid]);
+
+  //this copies the gameRules from rules list onto our room object
+  // useEffect(() => {
+  //   gameRules &&
+  //     db
+  //       .database()
+  //       .ref(`/Rooms/${roomName}/Game`)
+  //       .update({ gameRules: gameRules.rules });
+  // }, [gameRules]);
 
   function playerReady() {
     db.database()
@@ -81,22 +97,44 @@ export default function WaitingRoom(props) {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {uid && <Text> {uid} </Text>}
-      {!ready && <Button onPress={navToGame} title="READY!!!!!!!!!!!!!!!" />}
-      <Image source={QRcode} style={styles.logo} />
-      <Text>ROOM ${roomName}</Text>
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#E5FDFF',
+      }}
+    >
+   <Image source={QRcode} style={styles.logo} />
+  
+      <Text style={styles.room}>{roomName}</Text>
       {loading && <Text> loading players... </Text>}
-      {players &&
-        players.map((player) => (
-          <PlayerStatus
-            key={player.uid}
-            name={player.uid}
-            status={player.status ? 'Ready' : 'Waiting'}
-          />
-        ))}
 
-      <Button title="Ready!" onPress={() => playerReady(roomName, uid)} />
+      <View style={{ margin: 10 }}>
+        {players &&
+          players.map((player) => (
+            <PlayerStatus
+              key={player.uid}
+              name={player.uid}
+              status={player.status ? 'Ready' : 'Waiting'}
+            />
+          ))}
+      </View>
+      {uid && <Text style={styles.user}>you: {uid} </Text>}
+      <Button
+        title="Ready!"
+        buttonStyle={styles.ready}
+        titleStyle={styles.buttonText}
+        onPress={() => playerReady(roomName, uid)}
+      />
+      {!ready && (
+        <Button
+          buttonStyle={styles.start}
+          titleStyle={styles.buttonText}
+          onPress={navToGame}
+          title="Let's Go!"
+        />
+      )}
     </View>
   );
 }
@@ -105,5 +143,28 @@ const styles = StyleSheet.create({
   logo: {
     margin: 10,
     marginRight: 40,
+  },
+  room: {
+    fontSize: 30,
+    color: 'black',
+    fontFamily: 'shortstack',
+  },
+  user: {
+    fontSize: 20,
+    color: 'black',
+    fontFamily: 'shortstack',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 30,
+    fontFamily: 'gamejot',
+  },
+  ready: {
+    backgroundColor: 'darkblue',
+    borderRadius: 10,
+  },
+  start: {
+    backgroundColor: 'darkred',
+    borderRadius: 10,
   },
 });

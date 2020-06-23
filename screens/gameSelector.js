@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import GameCard from './utilities/gameCard';
 import { useListKeys } from 'react-firebase-hooks/database';
 import { db } from '../firebaseConfig';
@@ -18,9 +18,11 @@ export default function GameSelector({ navigation }) {
   // TODO map over gameslist to render GameCards
   console.log('gameslist', gamesList);
   return (
-    <ScrollView style={styles.background}>
+    <View style={styles.background}>
+      <ScrollView style={{marginTop: 50}}>
       <GameCard nav={navigation} gameName={gamesList[0]} />
       <GameCard nav={navigation} gameName={gamesList[1]} />
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
