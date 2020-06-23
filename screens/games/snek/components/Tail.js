@@ -1,6 +1,6 @@
-import React from 'react';
-import { View } from 'react-native';
-import { Constants } from './Constants';
+import React from "react";
+import { View } from "react-native";
+import { Constants } from "./Constants";
 function Tail({ position, size, elements }) {
   let tailList = elements.map((el, ind) => {
     return (
@@ -9,8 +9,8 @@ function Tail({ position, size, elements }) {
         style={{
           width: size,
           height: size,
-          backgroundColor: '#888888',
-          position: 'absolute',
+          backgroundColor: "#888888",
+          position: "absolute",
           left: el[0] * size,
           top: el[1] * size,
         }}
@@ -22,7 +22,7 @@ function Tail({ position, size, elements }) {
       style={{
         width: Constants.GRID_SIZE * size,
         height: Constants.GRID_SIZE * size,
-        position: 'absolute',
+        position: "absolute",
       }}
     >
       {tailList}
