@@ -76,13 +76,13 @@ export default function WaitingRoom(props) {
   }, [uid]);
 
   //this copies the gameRules from rules list onto our room object
-  useEffect(() => {
-    gameRules &&
-      db
-        .database()
-        .ref(`/Rooms/${roomName}/Game`)
-        .update({ gameRules: gameRules.rules });
-  }, [gameRules]);
+  // useEffect(() => {
+  //   gameRules &&
+  //     db
+  //       .database()
+  //       .ref(`/Rooms/${roomName}/Game`)
+  //       .update({ gameRules: gameRules.rules });
+  // }, [gameRules]);
 
   function playerReady() {
     db.database()

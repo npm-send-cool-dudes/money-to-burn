@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ThemeProvider, Button, Text } from 'react-native-elements';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { db } from './firebaseConfig';
 
@@ -13,19 +12,30 @@ import JoinRoom from './screens/joinRoom';
 import ClikBait from './screens/clikBait';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
+import { ThemeProvider } from 'react-native-elements';
+import { RotationGestureHandler } from 'react-native-gesture-handler';
+
 
 const getFonts = () =>
   Font.loadAsync({
     shortstack: require('./assets/fonts/ShortStack-Regular.ttf'),
+    hitv: require('./assets/fonts/HiTv.ttf'),
+    gamejot: require('./assets/fonts/Gamejot.ttf')
   });
 
 const Stack = createStackNavigator();
 
 const theme = {
   Button: {
-    raised: true,
+    raised: false,
+    containerStyle: {margin: 5}
   },
 };
+
+const header = {
+  headerTransparent: true,
+  headerTitleStyle: {fontFamily: 'gamejot'}
+}
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -40,16 +50,24 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="GameSelector" component={GameSelector} />
-          <Stack.Screen name="WaitingRoom" component={WaitingRoom} />
-          <Stack.Screen name="JoinRoom" component={JoinRoom} />
-          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Home" 
+          options={header} component={Home} />
+          <Stack.Screen name="GameSelector"
+          options={header}
+           component={GameSelector} />
+          <Stack.Screen name="WaitingRoom" 
+          options={header} component={WaitingRoom} />
+          <Stack.Screen name="JoinRoom" 
+          options={header} component={JoinRoom} />
+          <Stack.Screen name="Login" 
+          options={header} component={Login} />
           {/* gameListStart */}
           {/* clickBait was labeled ClikBait which broke the app */}
-          <Stack.Screen name="clikBait" component={ClikBait} />
+          <Stack.Screen name="clikBait" 
+          options={header} component={ClikBait} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
   );
 }
+
