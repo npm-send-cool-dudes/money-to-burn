@@ -20,10 +20,6 @@ import randomColor from 'randomcolor';
 import getRandomDecimal from './utilities/getRandomDecimal';
 import roomCleanUp from '../utilFuncs/roomCleanUp';
 import _setupCollisionHandler from './drivingUtilities/_setupCollisonHandler';
-import {
-  _addObjectsToWorld,
-  // _getEntities,
-} from './drivingUtilities/_addObjectsToWorld';
 
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -62,30 +58,30 @@ let Physics = (entities, { time }) => {
 const debris = [];
 const obstacleCount = 3;
 
-// const _addObjectsToWorld = () => {
-//   let objects = [ball, floor];
+const _addObjectsToWorld = () => {
+  let objects = [ball, floor];
 
-//   //create the bodies for blocks
-//   for (let x = 0; x <= obstacleCount; x++) {
-//     const debris2 = Matter.Bodies.rectangle(
-//       randomInt(1, width - 30),
-//       randomInt(0, 200),
-//       DEBRIS_HEIGHT,
-//       DEBRIS_WIDTH,
-//       {
-//         frictionAir: getRandomDecimal(0.015, 0.04),
-//         label: 'debris',
-//       }
-//     );
-//     debris.push(debris2);
-//   }
-//   objects = objects.concat(debris);
-//   Matter.World.add(world, objects);
-//   return {
-//     engine,
-//     world,
-//   };
-// };
+  //create the bodies for blocks
+  for (let x = 0; x <= obstacleCount; x++) {
+    const debris2 = Matter.Bodies.rectangle(
+      randomInt(1, width - 30),
+      randomInt(0, 200),
+      DEBRIS_HEIGHT,
+      DEBRIS_WIDTH,
+      {
+        frictionAir: getRandomDecimal(0.015, 0.04),
+        label: 'debris',
+      }
+    );
+    debris.push(debris2);
+  }
+  objects = objects.concat(debris);
+  Matter.World.add(world, objects);
+  return {
+    engine,
+    world,
+  };
+};
 
 const _getEntities = () => {
   const entities = {
@@ -150,8 +146,9 @@ export default function App(props) {
   const roomName = props.route.params.roomName;
   const navigation = props.navigation;
 
-  const playerListData = db.database().ref(`/Rooms/${roomName}/playerList`);
-  const [playerList] = useListVals(playerListData);
+  const [playerList] = useListVals(
+    db.database().ref(`/Rooms/${roomName}/playerList`)
+  );
 
   const [allScores] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/Scores`)
@@ -218,16 +215,15 @@ export default function App(props) {
       };
     }
   };
-
+  //reset gravity to default on each new game
   useEffect(() => {
+    reset();
     Physics = (entities, { time }) => {
       let engine = entities['physics'].engine;
       engine.world.gravity.y = startGravity;
       Matter.Engine.update(engine, time.delta);
       return entities;
     };
-
-    _setupCollisionHandler(engine, width, roomName, uid, debris);
   }, []);
 
   //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
@@ -239,7 +235,7 @@ export default function App(props) {
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
     _toggle();
-    reset();
+    _setupCollisionHandler(engine, width, roomName, uid, debris);
   }, []);
 
   useEffect(() => {
@@ -257,10 +253,7 @@ export default function App(props) {
   };
 
   const _subscribe = () => {
-    console.log('subscripted');
-    //set how smooth player control of sprite is
     Accelerometer.setUpdateInterval(100);
-
     setSubscription(
       Accelerometer.addListener((accelerometerData) => {
         setData(accelerometerData);
@@ -269,8 +262,6 @@ export default function App(props) {
   };
 
   const _unsubscribe = () => {
-    console.log('unsciripted');
-
     subscription && subscription.remove();
     setSubscription(null);
   };
