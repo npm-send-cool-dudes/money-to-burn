@@ -14,14 +14,14 @@ import { GameEngine } from 'react-native-game-engine';
 import Matter from 'matter-js';
 import { Accelerometer } from 'expo-sensors';
 
-import Circle from './utilities/circle';
-import Box from './utilities/box';
+import Circle from './asteroidAdventureUtilities/circle';
+import Box from './asteroidAdventureUtilities/box';
 
 import randomInt from 'random-int';
 import randomColor from 'randomcolor';
-import getRandomDecimal from './utilities/getRandomDecimal';
+import getRandomDecimal from './asteroidAdventureUtilities/getRandomDecimal';
 import roomCleanUp from '../utilFuncs/roomCleanUp';
-import _setupCollisionHandler from './drivingUtilities/_setupCollisonHandler';
+import _setupCollisionHandler from './asteroidAdventureUtilities/_setupCollisonHandler';
 
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -31,8 +31,8 @@ import { useObjectVal, useListVals } from 'react-firebase-hooks/database';
 const { width, height } = Dimensions.get('screen');
 
 const BALL_SIZE = 20;
-const DEBRIS_HEIGHT = 70;
-const DEBRIS_WIDTH = 20;
+const DEBRIS_HEIGHT = 50;
+const DEBRIS_WIDTH = 50;
 
 const ball = Matter.Bodies.circle(0, height - 30, BALL_SIZE, {
   isStatic: true,
@@ -122,8 +122,13 @@ const _getEntities = () => {
   return entities;
 };
 
-//reset position of all blocks
+//reset position and velocityu of all blocks
 const reset = () => {
+  debris.forEach((debrisItem) => {
+    Matter.Body.set(debrisItem, {
+      velocity: { x: 0, y: 0 },
+    });
+  });
   debris.forEach((debris) => {
     // loop through all the blocks
     Matter.Body.set(debris, {
@@ -266,12 +271,6 @@ export default function App(props) {
   //cleanup after game ends
   useEffect(() => {
     return () => {
-      //reset velocity of each block after game ends since they get reused.
-      debris.forEach((debrisItem) => {
-        Matter.Body.set(debrisItem, {
-          velocity: { x: 0, y: 0 },
-        });
-      });
       reset();
       _unsubscribe();
     };

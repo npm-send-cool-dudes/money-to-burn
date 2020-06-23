@@ -12,7 +12,7 @@ import WaitingRoom from './screens/waitingRoom';
 import JoinRoom from './screens/joinRoom';
 import ClikBait from './screens/clikBait';
 
-import RonGame from './screens/ronGame';
+import AsteroidAdventure from './screens/asteroidAdventure';
 
 const Stack = createStackNavigator();
 
@@ -36,8 +36,8 @@ export default function App() {
 
           {/* change name when finalized */}
           <Stack.Screen
-            name="fzero"
-            component={RonGame}
+            name="Asteroid Adventure"
+            component={AsteroidAdventure}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

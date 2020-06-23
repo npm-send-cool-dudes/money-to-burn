@@ -14,7 +14,7 @@ const Circle = ({ body }) => {
     <View style={[styles.head, { left: x, top: y }]}>
       <Image
         style={styles.spaceShip}
-        source={require('../drivingUtilities/player.png')}
+        source={require('./player.png')}
         // player.png Credit "Kenney.nl"
       />
     </View>
@@ -34,10 +34,10 @@ const styles = StyleSheet.create({
     borderRadius: BODY_DIAMETER * 2,
   },
   spaceShip: {
-    width: BODY_DIAMETER + 10,
+    width: BODY_DIAMETER,
     height: BODY_DIAMETER,
     resizeMode: 'stretch',
-    left: -11,
+    // left: -11,
     bottom: 10,
   },
 });
