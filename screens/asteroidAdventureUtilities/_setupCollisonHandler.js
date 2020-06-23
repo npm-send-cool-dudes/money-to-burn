@@ -25,7 +25,7 @@ const _setupCollisionHandler = (engine, width, roomName, uid) => {
     }
 
     if (objA === 'ball' && objB === 'debris') {
-      Alert.alert('Game Over', 'You lose...');
+      Alert.alert('Game Over');
       db.database()
         .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
         .update({ [uid]: false });
