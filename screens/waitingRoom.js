@@ -4,10 +4,8 @@ import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {Button} from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import { Divider } from 'react-native-elements';
-
-
 
 const QRcode = {
   uri:
@@ -100,24 +98,43 @@ export default function WaitingRoom(props) {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor: '#E5FDFF',}}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#E5FDFF',
+      }}
+    >
       <Image source={QRcode} style={styles.logo} />
       <Text style={styles.room}>{roomName}</Text>
       {loading && <Text> loading players... </Text>}
 
-      <View style={{margin: 10}}>
-      {players &&
-        players.map((player) => (
-          <PlayerStatus
-            key={player.uid}
-            name={player.uid}
-            status={player.status ? 'Ready' : 'Waiting'}
-          />
-        ))}
+      <View style={{ margin: 10 }}>
+        {players &&
+          players.map((player) => (
+            <PlayerStatus
+              key={player.uid}
+              name={player.uid}
+              status={player.status ? 'Ready' : 'Waiting'}
+            />
+          ))}
       </View>
       {uid && <Text style={styles.user}>you: {uid} </Text>}
-      <Button title="Ready!" buttonStyle={styles.ready} titleStyle={styles.buttonText} onPress={() => playerReady(roomName, uid)} />
-      {!ready && <Button buttonStyle={styles.start} titleStyle={styles.buttonText}onPress={navToGame} title="Let's Go!" />}
+      <Button
+        title="Ready!"
+        buttonStyle={styles.ready}
+        titleStyle={styles.buttonText}
+        onPress={() => playerReady(roomName, uid)}
+      />
+      {!ready && (
+        <Button
+          buttonStyle={styles.start}
+          titleStyle={styles.buttonText}
+          onPress={navToGame}
+          title="Let's Go!"
+        />
+      )}
     </View>
   );
 }
@@ -130,23 +147,24 @@ const styles = StyleSheet.create({
   room: {
     fontSize: 30,
     color: 'black',
-    fontFamily: 'shortstack'
+    fontFamily: 'shortstack',
   },
   user: {
     fontSize: 20,
     color: 'black',
-    fontFamily: 'shortstack'
+    fontFamily: 'shortstack',
   },
   buttonText: {
     color: 'white',
-    fontFamily: 'gamejot'
+    fontSize: 30,
+    fontFamily: 'gamejot',
   },
   ready: {
     backgroundColor: 'darkblue',
-    borderRadius: 10, 
+    borderRadius: 10,
   },
   start: {
     backgroundColor: 'darkred',
-    borderRadius: 10, 
+    borderRadius: 10,
   },
 });

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, TextInput, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, Alert } from 'react-native';
 import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { Button, Input } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const QRcode = {
   uri:
@@ -29,19 +31,38 @@ export default function JoinRoom({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <TextInput
-        onChangeText={(text) => setRoomName(text)}
-        placeholder="enter room"
+    <View style={styles.background}>
+      <Input
+        containerStyle={{ width: 120 }}
+        inputStyle={{ fontFamily: 'shortstack', fontSize: 30, width: 100 }}
+        placeholder="Room"
+        leftIcon={{ type: 'font-awesome', name: 'fire' }}
+        onChangeText={(value) => setRoomName(value)}
       />
-      <Button title="join" onPress={() => join()} />
+      <Button
+        title="Join"
+        titleStyle={styles.buttonText}
+        buttonStyle={styles.button}
+        onPress={() => join()}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    margin: 10,
-    marginRight: 40,
+  background: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E5FDFF',
+  },
+  button: {
+    backgroundColor: 'darkblue',
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 30,
+    fontFamily: 'gamejot',
   },
 });

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-
 const styles = StyleSheet.create({
   background: {
     alignItems: 'center',
@@ -13,15 +12,20 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 15,
     color: 'black',
-    fontFamily: 'shortstack'
-  }
+    fontFamily: 'shortstack',
+  },
 });
 
 export default function PlayerStatus(props) {
   return (
-    <View style={{...styles.background,backgroundColor: props.status==='Waiting'? 'pink': 'lightgreen'}}>
-        <Text style={styles.status}>Player: {props.name}</Text>
-        <Text style={styles.status}>Status: {props.status}</Text>
+    <View
+      style={{
+        ...styles.background,
+        backgroundColor: props.status === 'Waiting' ? 'pink' : 'lightgreen',
+      }}
+    >
+      <Text style={styles.status}>Player: {props.name}</Text>
+      <Text style={styles.status}>Status: {props.status}</Text>
     </View>
   );
 }

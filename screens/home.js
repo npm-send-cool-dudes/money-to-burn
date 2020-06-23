@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {Text, View, StyleSheet, ImageBackground } from 'react-native';
-import {Button} from 'react-native-elements';
+import { Text, View, StyleSheet, ImageBackground } from 'react-native';
+import { Button } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   background: {
@@ -35,10 +35,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonText: {
+    fontSize: 30,
     color: 'white',
-    fontFamily: 'gamejot'
+    fontFamily: 'gamejot',
   },
- 
+
   image: {
     height: 300,
     width: 300,
@@ -46,17 +47,16 @@ const styles = StyleSheet.create({
 });
 
 const background = {
-  uri:
-  'https://media.giphy.com/media/xT9DPofgEkyu9t4wPm/giphy.gif',
+  uri: 'https://media.giphy.com/media/xT9DPofgEkyu9t4wPm/giphy.gif',
 };
 
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.background}>
       <View style={styles.headerBox}>
-      <ImageBackground source={background} style={styles.image} opacity={100}>
-        <Text style={styles.header}>MONEY TO BURN</Text>
-      </ImageBackground>
+        <ImageBackground source={background} style={styles.image} opacity={100}>
+          <Text style={styles.header}>MONEY TO BURN</Text>
+        </ImageBackground>
       </View>
       <View style={styles.buttonGroup}>
         <Button
@@ -79,6 +79,5 @@ export default function HomeScreen({ navigation }) {
         />
       </View>
     </View>
-   
   );
 }
