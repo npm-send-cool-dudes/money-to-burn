@@ -26,13 +26,13 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useObjectVal, useListVals } from 'react-firebase-hooks/database';
 
 //setup game engine
-export const { width, height } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
-export const BALL_SIZE = 20;
+const BALL_SIZE = 20;
 const DEBRIS_HEIGHT = 70;
 const DEBRIS_WIDTH = 20;
 
-export const ball = Matter.Bodies.circle(0, height - 30, BALL_SIZE, {
+const ball = Matter.Bodies.circle(0, height - 30, BALL_SIZE, {
   isStatic: true,
   label: 'ball',
 });
@@ -134,8 +134,8 @@ const reset = () => {
   });
 };
 
-_addObjectsToWorld(obstacleCount, debris, engine, world);
-_getEntities(engine, world, obstacleCount, debris);
+_addObjectsToWorld();
+_getEntities();
 
 export default function App(props) {
   const [data, setData] = useState({});
@@ -217,13 +217,13 @@ export default function App(props) {
   };
   //reset gravity to default on each new game
   useEffect(() => {
-    reset();
     Physics = (entities, { time }) => {
       let engine = entities['physics'].engine;
       engine.world.gravity.y = startGravity;
       Matter.Engine.update(engine, time.delta);
       return entities;
     };
+    reset();
   }, []);
 
   //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
@@ -240,6 +240,11 @@ export default function App(props) {
 
   useEffect(() => {
     return () => {
+      debris.forEach((debrisItem) => {
+        Matter.Body.set(debrisItem, {
+          frictionAir: 0.0,
+        });
+      });
       _unsubscribe();
     };
   }, []);

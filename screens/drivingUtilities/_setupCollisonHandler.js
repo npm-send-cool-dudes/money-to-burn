@@ -3,7 +3,14 @@ import randomInt from 'random-int';
 import { Alert } from 'react-native';
 import { db } from '../../firebaseConfig';
 
-const _setupCollisionHandler = (engine, width, roomName, uid, debris) => {
+const _setupCollisionHandler = (
+  engine,
+  width,
+  roomName,
+  uid,
+  debris,
+  setGravity
+) => {
   Matter.Events.on(engine, 'collisionStart', (event) => {
     var pairs = event.pairs;
 
@@ -29,11 +36,6 @@ const _setupCollisionHandler = (engine, width, roomName, uid, debris) => {
       db.database()
         .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
         .update({ [uid]: false });
-      debris.forEach((debrisItem) => {
-        Matter.Body.set(debrisItem, {
-          isStatic: true,
-        });
-      });
     }
   });
 };
