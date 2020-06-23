@@ -4,7 +4,7 @@ import { View, StyleSheet, Dimensions, Image } from 'react-native';
 const { height, width } = Dimensions.get('window');
 
 const BODY_DIAMETER = Math.trunc(Math.max(width, height) * 0.1);
-// const BORDER_WIDTH = Math.trunc(BODY_DIAMETER * 0.1);
+const BORDER_WIDTH = Math.trunc(BODY_DIAMETER * 0.1);
 
 const Circle = ({ body }) => {
   const { position } = body;
@@ -25,17 +25,19 @@ export default Circle;
 
 const styles = StyleSheet.create({
   head: {
-    // backgroundColor: '#FF5877',
-    // borderColor: '#FFC1C1',
-    // borderWidth: BORDER_WIDTH,
-    // width: BODY_DIAMETER,
-    // height: BODY_DIAMETER,
-    // position: 'absolute',
-    // borderRadius: BODY_DIAMETER * 2,
-  },
-  spaceShip: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    borderWidth: BORDER_WIDTH,
     width: BODY_DIAMETER,
     height: BODY_DIAMETER,
-    resizeMode: 'contain',
+    position: 'absolute',
+    borderRadius: BODY_DIAMETER * 2,
+  },
+  spaceShip: {
+    width: BODY_DIAMETER + 10,
+    height: BODY_DIAMETER,
+    resizeMode: 'stretch',
+    left: -11,
+    bottom: 10,
   },
 });

@@ -1,3 +1,5 @@
+// game based off tutorial from https://pusher.com/tutorials/game-device-sensors-react-native#prerequisites
+
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -327,12 +329,12 @@ export default function App(props) {
       <View style={styles.controls}>
         <Button
           buttonStyle={styles.decrease}
-          title="Decrease!"
+          title="Brake"
           onPress={decreaseGravity}
         />
         <Button
           buttonStyle={styles.increase}
-          title="Increase!"
+          title="Accelerate"
           onPress={increaseGravity}
         />
       </View>
