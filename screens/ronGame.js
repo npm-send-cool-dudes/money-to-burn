@@ -48,7 +48,7 @@ const floor = Matter.Bodies.rectangle(width / 2, height, width, 10, {
 const engine = Matter.Engine.create({ enableSleeping: false });
 const world = engine.world;
 
-const startGravity = 0.0;
+const startGravity = 0.1;
 
 let Physics = (entities, { time }) => {
   let engine = entities['physics'].engine;
