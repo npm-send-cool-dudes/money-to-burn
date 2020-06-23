@@ -158,10 +158,12 @@ export default function App(props) {
   );
 
   //win conditions are either first to a set score or highest score(s) if all are dead
+  const pointsToWin = 30;
+
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey] >= 10) {
+        if (allScores[userKey] >= pointsToWin) {
           _unsubscribe();
           setWinner([userKey]);
         }
@@ -223,7 +225,6 @@ export default function App(props) {
       Matter.Engine.update(engine, time.delta);
       return entities;
     };
-    reset();
   }, []);
 
   //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
@@ -242,9 +243,10 @@ export default function App(props) {
     return () => {
       debris.forEach((debrisItem) => {
         Matter.Body.set(debrisItem, {
-          frictionAir: 0.0,
+          velocity: { x: 0, y: 0 },
         });
       });
+      reset();
       _unsubscribe();
     };
   }, []);
