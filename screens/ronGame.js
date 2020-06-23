@@ -20,19 +20,23 @@ import randomColor from 'randomcolor';
 import getRandomDecimal from './utilities/getRandomDecimal';
 import roomCleanUp from '../utilFuncs/roomCleanUp';
 import _setupCollisionHandler from './drivingUtilities/_setupCollisonHandler';
+import {
+  _addObjectsToWorld,
+  // _getEntities,
+} from './drivingUtilities/_addObjectsToWorld';
 
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useObjectVal, useListVals } from 'react-firebase-hooks/database';
 
 //setup game engine
-const { width, height } = Dimensions.get('screen');
+export const { width, height } = Dimensions.get('screen');
 
-const BALL_SIZE = 20;
+export const BALL_SIZE = 20;
 const DEBRIS_HEIGHT = 70;
 const DEBRIS_WIDTH = 20;
 
-const ball = Matter.Bodies.circle(0, height - 30, BALL_SIZE, {
+export const ball = Matter.Bodies.circle(0, height - 30, BALL_SIZE, {
   isStatic: true,
   label: 'ball',
 });
@@ -58,30 +62,30 @@ let Physics = (entities, { time }) => {
 const debris = [];
 const obstacleCount = 3;
 
-const _addObjectsToWorld = () => {
-  let objects = [ball, floor];
+// const _addObjectsToWorld = () => {
+//   let objects = [ball, floor];
 
-  //create the bodies for blocks
-  for (let x = 0; x <= obstacleCount; x++) {
-    const debris2 = Matter.Bodies.rectangle(
-      randomInt(1, width - 30),
-      randomInt(0, 200),
-      DEBRIS_HEIGHT,
-      DEBRIS_WIDTH,
-      {
-        frictionAir: getRandomDecimal(0.015, 0.04),
-        label: 'debris',
-      }
-    );
-    debris.push(debris2);
-  }
-  objects = objects.concat(debris);
-  Matter.World.add(world, objects);
-  return {
-    engine,
-    world,
-  };
-};
+//   //create the bodies for blocks
+//   for (let x = 0; x <= obstacleCount; x++) {
+//     const debris2 = Matter.Bodies.rectangle(
+//       randomInt(1, width - 30),
+//       randomInt(0, 200),
+//       DEBRIS_HEIGHT,
+//       DEBRIS_WIDTH,
+//       {
+//         frictionAir: getRandomDecimal(0.015, 0.04),
+//         label: 'debris',
+//       }
+//     );
+//     debris.push(debris2);
+//   }
+//   objects = objects.concat(debris);
+//   Matter.World.add(world, objects);
+//   return {
+//     engine,
+//     world,
+//   };
+// };
 
 const _getEntities = () => {
   const entities = {
@@ -134,8 +138,8 @@ const reset = () => {
   });
 };
 
-_addObjectsToWorld();
-_getEntities();
+_addObjectsToWorld(obstacleCount, debris, engine, world);
+_getEntities(engine, world, obstacleCount, debris);
 
 export default function App(props) {
   const [data, setData] = useState({});
