@@ -19,7 +19,7 @@ import { RotationGestureHandler } from 'react-native-gesture-handler';
 const getFonts = () =>
   Font.loadAsync({
     shortstack: require('./assets/fonts/ShortStack-Regular.ttf'),
-    hitv: require('./assets/fonts/HiTv.ttf'),
+    hitv: require('./assets/fonts/HiTV.ttf'),
     gamejot: require('./assets/fonts/Gamejot.ttf')
   });
 

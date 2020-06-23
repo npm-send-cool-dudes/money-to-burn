@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, StyleSheet, ImageBackground } from 'react-native';
-import { Button, Text } from 'react-native-elements';
+import {Text, View, StyleSheet, ImageBackground } from 'react-native';
+import {Button} from 'react-native-elements';
 
 const styles = StyleSheet.create({
   background: {
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
   play: {
     backgroundColor: 'darkblue',
     borderRadius: 10,
-    
   },
   highScores: {
     backgroundColor: 'darkred',

@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import {Button} from 'react-native-elements';
+import { Divider } from 'react-native-elements';
+
+
 
 const QRcode = {
   uri:
@@ -96,12 +100,12 @@ export default function WaitingRoom(props) {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {uid && <Text> {uid} </Text>}
-      {!ready && <Button onPress={navToGame} title="READY!!!!!!!!!!!!!!!" />}
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor: '#E5FDFF',}}>
       <Image source={QRcode} style={styles.logo} />
-      <Text>ROOM ${roomName}</Text>
+      <Text style={styles.room}>{roomName}</Text>
       {loading && <Text> loading players... </Text>}
+
+      <View style={{margin: 10}}>
       {players &&
         players.map((player) => (
           <PlayerStatus
@@ -110,8 +114,10 @@ export default function WaitingRoom(props) {
             status={player.status ? 'Ready' : 'Waiting'}
           />
         ))}
-
-      <Button title="Ready!" onPress={() => playerReady(roomName, uid)} />
+      </View>
+      {uid && <Text style={styles.user}>you: {uid} </Text>}
+      <Button title="Ready!" buttonStyle={styles.ready} titleStyle={styles.buttonText} onPress={() => playerReady(roomName, uid)} />
+      {!ready && <Button buttonStyle={styles.start} titleStyle={styles.buttonText}onPress={navToGame} title="Let's Go!" />}
     </View>
   );
 }
@@ -120,5 +126,27 @@ const styles = StyleSheet.create({
   logo: {
     margin: 10,
     marginRight: 40,
+  },
+  room: {
+    fontSize: 30,
+    color: 'black',
+    fontFamily: 'shortstack'
+  },
+  user: {
+    fontSize: 20,
+    color: 'black',
+    fontFamily: 'shortstack'
+  },
+  buttonText: {
+    color: 'white',
+    fontFamily: 'gamejot'
+  },
+  ready: {
+    backgroundColor: 'darkblue',
+    borderRadius: 10, 
+  },
+  start: {
+    backgroundColor: 'darkred',
+    borderRadius: 10, 
   },
 });
