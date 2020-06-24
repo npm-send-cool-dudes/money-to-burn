@@ -193,12 +193,7 @@ export default function App(props) {
           .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
           .update({ [uid]: false });
 
-        Physics = (entities, { time }) => {
-          let engine = entities['physics'].engine;
-          engine.world.gravity.y = 0;
-          Matter.Engine.update(engine, time.delta);
-          return entities;
-        };
+        reset();
       }
     });
   };
