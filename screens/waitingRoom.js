@@ -5,7 +5,6 @@ import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Button } from 'react-native-elements';
-import { Divider } from 'react-native-elements';
 
 const QRcode = {
   uri:
@@ -106,7 +105,8 @@ export default function WaitingRoom(props) {
         backgroundColor: '#E5FDFF',
       }}
     >
-      <Image source={QRcode} style={styles.logo} />
+   <Image source={QRcode} style={styles.logo} />
+  
       <Text style={styles.room}>{roomName}</Text>
       {loading && <Text> loading players... </Text>}
 

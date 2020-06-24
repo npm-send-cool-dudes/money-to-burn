@@ -49,7 +49,7 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Home" options={header} component={Home} />
+          <Stack.Screen name="Home" options={{...header, headerShown: false}} component={Home} />
           <Stack.Screen
             name="GameSelector"
             options={header}
