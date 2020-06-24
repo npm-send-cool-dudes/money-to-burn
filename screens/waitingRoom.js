@@ -5,6 +5,7 @@ import PlayerStatus from './utilities/playerStatus';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Button } from 'react-native-elements';
+import random_name from 'node-random-name';
 
 const QRcode = {
   uri:
@@ -115,12 +116,12 @@ export default function WaitingRoom(props) {
           players.map((player) => (
             <PlayerStatus
               key={player.uid}
-              name={player.uid}
+              name={random_name({seed: player.uid})}
               status={player.status ? 'Ready' : 'Waiting'}
             />
           ))}
       </View>
-      {uid && <Text style={styles.user}>you: {uid} </Text>}
+      {uid && <Text style={styles.user}>you: {random_name({seed: uid})} </Text>}
       <Button
         title="Ready!"
         buttonStyle={styles.ready}

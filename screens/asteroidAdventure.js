@@ -26,6 +26,7 @@ import roomCleanUp from '../utilFuncs/roomCleanUp';
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useObjectVal, useListVals } from 'react-firebase-hooks/database';
+import random_name from 'node-random-name';
 
 //setup game engine
 const { width, height } = Dimensions.get('screen');
@@ -339,7 +340,7 @@ export default function App(props) {
             Object.keys(allScores).map((userKey) => {
               return (
                 <Text key={userKey} style={styles.text}>
-                  {userKey}: {allScores[userKey]}
+                  {random_name({seed: userKey})}: {allScores[userKey]}
                 </Text>
               );
             })}
@@ -351,7 +352,7 @@ export default function App(props) {
           {winner.map((player) => (
             <Text key={player} style={styles.winner}>
               {'\n'}
-              {player}
+              {random_name({seed: player})}
             </Text>
           ))}
         </Text>

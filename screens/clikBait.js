@@ -4,6 +4,7 @@ import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import roomCleanUp from '../utilFuncs/roomCleanUp';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
+import random_name from 'node-random-name';
 
 export default function ClikBait(props) {
   const [winner, setWinner] = useState();
@@ -70,7 +71,7 @@ export default function ClikBait(props) {
               if (userKey !== uid) {
                 return (
                   <Text key={userKey}>
-                    {userKey} Score: {allScores[userKey]}
+                    {random_name({seed: userKey})} Score: {allScores[userKey]}
                   </Text>
                 );
               }
@@ -82,7 +83,7 @@ export default function ClikBait(props) {
       )}
       {winner && (
         <View>
-          <Text>Winner is {winner}</Text>
+          <Text>Winner is {random_name({seed: winner})}</Text>
           <Button
             title="Go Home"
             onPress={() => roomCleanUp(navigation, roomName, uid, playerList)}
