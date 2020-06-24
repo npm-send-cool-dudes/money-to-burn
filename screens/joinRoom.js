@@ -33,7 +33,7 @@ export default function JoinRoom({ navigation }) {
   return (
     <View style={styles.background}>
       <Input
-        containerStyle={{ width: 120 }}
+        containerStyle={{ width: 140 }}
         inputStyle={{ fontFamily: 'shortstack', fontSize: 30, width: 100 }}
         placeholder="Room"
         leftIcon={{ type: 'font-awesome', name: 'fire' }}
