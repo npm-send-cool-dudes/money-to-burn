@@ -1,0 +1,106 @@
+{
+  "GamesList" : {
+    "Asteroid Adventure" : {
+      "rules" : {
+        "board" : "'start'"
+      }
+    },
+    "clikBait" : {
+      "8ypJqKlNaXTR1BPTp46B07bE4JV2" : 0,
+      "rules" : {
+        "board" : "noboard"
+      }
+    },
+    "fzero" : {
+      "rules" : {
+        "board" : "starting"
+      }
+    },
+    "snake" : {
+      "rules" : {
+        "board" : "starting stuff blah blah",
+        "otherstuff" : "heres more rules"
+      }
+    },
+    "snek" : {
+      "rules" : "'start"
+    }
+  },
+  "Rooms" : {
+    "1789" : {
+      "Game" : {
+        "Name" : "snake",
+        "gameRules" : {
+          "board" : "starting stuff blah blah",
+          "otherstuff" : "heres more rules"
+        }
+      },
+      "playerList" : {
+        "DvwF62SYfHSHnhXe7Ln6lGGaowc2" : {
+          "status" : true,
+          "uid" : "DvwF62SYfHSHnhXe7Ln6lGGaowc2"
+        }
+      },
+      "status" : true
+    },
+    "3599" : {
+      "Game" : {
+        "AliveStatus" : {
+          "8ypJqKlNaXTR1BPTp46B07bE4JV2" : false
+        },
+        "Scores" : {
+          "8ypJqKlNaXTR1BPTp46B07bE4JV2" : 16
+        }
+      }
+    },
+    "5141" : {
+      "Game" : {
+        "Name" : "Asteroid Adventure",
+        "gameRules" : {
+          "board" : "'start'"
+        }
+      },
+      "playerList" : {
+        "32j5TUNahlQSj2cCFEiYmLoO2DF3" : {
+          "status" : true,
+          "uid" : "32j5TUNahlQSj2cCFEiYmLoO2DF3"
+        }
+      },
+      "status" : false
+    }
+  },
+  "Users" : {
+    "dawhn" : {
+      "authToken" : "4387",
+      "highScores" : {
+        "clikBait" : "2",
+        "ticTacToe" : "5"
+      },
+      "tokens" : "44"
+    },
+    "harambe" : {
+      "authToken" : "1337",
+      "highScores" : {
+        "clikBait" : "10000",
+        "ticTacToe" : "21"
+      },
+      "tokens" : "3"
+    },
+    "hwanb" : {
+      "authToken" : "1336",
+      "highScores" : {
+        "clikBait" : "9000",
+        "ticTacToe" : "20"
+      },
+      "tokens" : "1000"
+    },
+    "shawn" : {
+      "authToken" : "1347",
+      "highScores" : {
+        "clikBait" : "1000",
+        "ticTacToe" : "25"
+      },
+      "tokens" : "344"
+    }
+  }
+}
