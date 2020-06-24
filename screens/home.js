@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, ImageBackground } from 'react-native';
-import { Button } from 'react-native-elements';
+import { View, StyleSheet, ImageBackground } from 'react-native';
+import { Button, Text } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   background: {
@@ -13,10 +13,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginLeft: 150,
     fontSize: 45,
-    fontWeight: 'bold',
     color: 'white',
     fontFamily: 'gamejot',
-    // transform: [{ rotate: '-38deg' }],
   },
   headerBox: {
     alignItems: 'center',
