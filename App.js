@@ -10,6 +10,7 @@ import GameSelector from './screens/gameSelector';
 import WaitingRoom from './screens/waitingRoom';
 import JoinRoom from './screens/joinRoom';
 import ClikBait from './screens/clikBait';
+import Snek from './screens/games/snek/Snek';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import { ThemeProvider } from 'react-native-elements';
@@ -39,6 +40,7 @@ const header = {
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [user, loading, error] = useAuthState(db.auth());
+
   console.log('home login id', user && user.uid);
   if (!fontsLoaded) {
     return (
@@ -49,7 +51,11 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Home" options={{...header, headerShown: false}} component={Home} />
+          <Stack.Screen
+            name="Home"
+            options={{ ...header, headerShown: false }}
+            component={Home}
+          />
           <Stack.Screen
             name="GameSelector"
             options={header}
@@ -64,7 +70,8 @@ export default function App() {
           <Stack.Screen name="Login" options={header} component={Login} />
           {/* gameListStart */}
           {/* clickBait was labeled ClikBait which broke the app */}
-          <Stack.Screen name="clikBait" options={header} component={ClikBait} />
+          <Stack.Screen name="clikBait" component={ClikBait} />
+          <Stack.Screen name="snek" component={Snek} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
