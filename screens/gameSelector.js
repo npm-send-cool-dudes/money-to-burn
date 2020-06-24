@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import GameCard from './utilities/gameCard';
 import { useListKeys } from 'react-firebase-hooks/database';
 import { db } from '../firebaseConfig';
@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: '#E5FDFF',
+    marginTop: 50
   },
 });
 
