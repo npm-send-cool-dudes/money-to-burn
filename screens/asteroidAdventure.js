@@ -143,43 +143,6 @@ const reset = () => {
   });
 };
 
-const _setupCollisionHandler = () => {
-  Matter.Events.on(engine, 'collisionStart', (event) => {
-    var pairs = event.pairs;
-
-    var objA = pairs[0].bodyA.label;
-    var objB = pairs[0].bodyB.label;
-
-    if (objA === 'floor' && objB === 'debris') {
-      Matter.Body.setPosition(pairs[0].bodyB, {
-        x: randomInt(1, width - 30),
-        y: randomInt(0, 200),
-      });
-
-      const currentScoreRef = db
-        .database()
-        .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
-      currentScoreRef.transaction((currentScore = 0) => {
-        return currentScore + 1;
-      });
-    }
-
-    if (objA === 'ball' && objB === 'debris') {
-      Alert.alert('Game Over');
-      db.database()
-        .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
-        .update({ [uid]: false });
-
-      Physics = (entities, { time }) => {
-        let engine = entities['physics'].engine;
-        engine.world.gravity.y = 0;
-        Matter.Engine.update(engine, time.delta);
-        return entities;
-      };
-    }
-  });
-};
-
 _addObjectsToWorld();
 _getEntities();
 
@@ -203,6 +166,43 @@ export default function App(props) {
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
 
+  const _setupCollisionHandler = () => {
+    Matter.Events.on(engine, 'collisionStart', (event) => {
+      var pairs = event.pairs;
+
+      var objA = pairs[0].bodyA.label;
+      var objB = pairs[0].bodyB.label;
+
+      if (objA === 'floor' && objB === 'debris') {
+        Matter.Body.setPosition(pairs[0].bodyB, {
+          x: randomInt(1, width - 30),
+          y: randomInt(0, 200),
+        });
+
+        const currentScoreRef = db
+          .database()
+          .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
+        currentScoreRef.transaction((currentScore = 0) => {
+          return currentScore + 1;
+        });
+      }
+
+      if (objA === 'ball' && objB === 'debris') {
+        Alert.alert('Game Over');
+        db.database()
+          .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+          .update({ [uid]: false });
+
+        Physics = (entities, { time }) => {
+          let engine = entities['physics'].engine;
+          engine.world.gravity.y = 0;
+          Matter.Engine.update(engine, time.delta);
+          return entities;
+        };
+      }
+    });
+  };
+
   //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
   useEffect(() => {
     db.database()
@@ -212,7 +212,7 @@ export default function App(props) {
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
     _toggle();
-    _setupCollisionHandler(engine, width, roomName, uid, debris);
+    _setupCollisionHandler();
   }, []);
 
   const _toggle = () => {
