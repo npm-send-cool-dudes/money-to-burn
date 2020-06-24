@@ -23,6 +23,8 @@ const getFonts = () =>
     gamejot: require('./assets/fonts/Gamejot.ttf'),
   });
 
+import AsteroidAdventure from './screens/asteroidAdventure';
+
 const Stack = createStackNavigator();
 
 const theme = {
@@ -70,8 +72,14 @@ export default function App() {
           <Stack.Screen name="Login" options={header} component={Login} />
           {/* gameListStart */}
           {/* clickBait was labeled ClikBait which broke the app */}
-          <Stack.Screen name="clikBait" component={ClikBait} />
-          <Stack.Screen name="snek" component={Snek} />
+          <Stack.Screen name="clikBait" component={ClikBait} options={{ headerShown: false }}/>
+          {/* change name when finalized */}
+          <Stack.Screen
+            name="Asteroid Adventure"
+            component={AsteroidAdventure}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="snek" component={Snek} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

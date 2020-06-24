@@ -59,7 +59,6 @@ export default function ClikBait(props) {
   userNames
   currentScores
   targetScore (win condition)
-
 */
 
   return (

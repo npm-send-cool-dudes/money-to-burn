@@ -16,8 +16,12 @@
     "babel-plugin-inline-dotenv": "^1.5.0",
     "dotenv": "^8.2.0",
     "expo": "~37.0.3",
+    "expo-sensors": "~8.1.0",
     "expo-font": "~8.1.0",
     "firebase": "7.9.0",
+    "matter-js": "^0.14.2",
+    "random-int": "^2.0.1",
+    "randomcolor": "^0.5.4",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-firebase-hooks": "^2.2.0",
@@ -30,6 +34,7 @@
     "react-native-reanimated": "~1.7.0",
     "react-native-safe-area-context": "0.7.3",
     "react-native-screens": "~2.2.0",
+    "react-native-sensors": "^6.0.2",
     "react-native-web": "~0.11.7"
   },
   "devDependencies": {

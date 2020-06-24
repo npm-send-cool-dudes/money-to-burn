@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: '#E5FDFF',
+    marginTop: 50
   },
 });
 
@@ -18,11 +19,14 @@ export default function GameSelector({ navigation }) {
   // TODO map over gameslist to render GameCards
   console.log('gameslist', gamesList);
   return (
-    <View style={styles.background}>
-      <ScrollView style={{marginTop: 50}}>
-      <GameCard nav={navigation} gameName={gamesList[0]} />
-      <GameCard nav={navigation} gameName={gamesList[1]} />
-      </ScrollView>
-    </View>
+    <ScrollView style={styles.background}>
+      {gamesList.map((game, index) => (
+        <GameCard
+          key={gamesList[index]}
+          nav={navigation}
+          gameName={gamesList[index]}
+        />
+      ))}
+    </ScrollView>
   );
 }
