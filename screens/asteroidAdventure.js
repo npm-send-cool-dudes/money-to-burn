@@ -22,7 +22,6 @@ import randomInt from 'random-int';
 import randomColor from 'randomcolor';
 import getRandomDecimal from './asteroidAdventureUtilities/getRandomDecimal';
 import roomCleanUp from '../utilFuncs/roomCleanUp';
-// import _setupCollisionHandler from './asteroidAdventureUtilities/_setupCollisonHandler';
 
 import { db } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -193,12 +192,13 @@ export default function App(props) {
           .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
           .update({ [uid]: false });
 
-        Physics = (entities, { time }) => {
-          let engine = entities['physics'].engine;
-          engine.world.gravity.y = 0;
-          Matter.Engine.update(engine, time.delta);
-          return entities;
-        };
+        // stop all blocks once dead
+        debris.forEach((debris) => {
+          // loop through all the blocks
+          Matter.Body.set(debris, {
+            isStatic: true,
+          });
+        });
       }
     });
   };
@@ -252,7 +252,7 @@ export default function App(props) {
   useEffect(() => {
     if (aliveStatusRoom && !Object.values(aliveStatusRoom).includes(true)) {
       const scores = Object.entries(allScores);
-      const winnersAndScores = [];
+      let winnersAndScores = [];
       scores.forEach((player, index) => {
         if (index === 0) {
           winnersAndScores.push(player);
@@ -264,9 +264,7 @@ export default function App(props) {
           }
         }
       });
-      console.log('winners and score', winnersAndScores);
       const winners = winnersAndScores.map((p) => p[0]);
-      console.log('winners', winners);
 
       setWinner(winners);
     }
