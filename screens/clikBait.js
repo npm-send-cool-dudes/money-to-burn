@@ -71,15 +71,15 @@ const [left,setLeft]=useState(0)
 
 useEffect(() => {
   const timer = setTimeout(() => {
-    setTop(Math.abs(Math.floor(Math.random()*(height)-100)));
-    setLeft(Math.abs(Math.floor(Math.random()*(width)-100)));
-  }, 400);
+    setTop(Math.abs(Math.floor(Math.random()*(height)-120)));
+    setLeft(Math.abs(Math.floor(Math.random()*(width)-120)));
+  }, 500);
   return () => clearTimeout(timer);
 }, [top]);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {!winner && <View style={{position: "absolute",top: top, left: left, zindex:1}}>
+      {!winner && <View style={{position: "absolute",top: top, left: left, zindex:2}}>
           <Button 
           buttonStyle={styles.click}
           titleStyle={styles.buttonText}
