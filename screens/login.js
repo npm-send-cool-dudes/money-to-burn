@@ -16,6 +16,33 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const googleSignIn = async () => {
+    setLoading(true);
+
+    try {
+      const response = await db
+        .auth()
+        .signInWithPopup(new db.auth.GoogleAuthProvider());
+      if (response) {
+        setLoading(false);
+        console.log(response.user);
+        setLogIn();
+      }
+    } catch (error) {
+      setLoading(false);
+      switch (error.code) {
+        case 'auth/user-not-found':
+          alert('No users found with that email address');
+          break;
+        case 'auth/invalid-email':
+          alert('Please enter an email address');
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
   const onSignUp = async () => {
     if (email && password) {
       setLoading(true);
@@ -24,6 +51,16 @@ export default function Login() {
           .auth()
           .createUserWithEmailAndPassword(email, password);
         if (response) {
+          const user = await db
+            .database()
+            .ref('Users/')
+            .child(response.user.uid)
+            .set({
+              email: response.user.email,
+              uid: response.user.uid,
+              stacks: 1000,
+            });
+
           setLoading(false);
 
           //add navigation here
@@ -48,6 +85,7 @@ export default function Login() {
           .signInWithEmailAndPassword(email, password);
         if (response) {
           setLoading(false);
+
           setLogIn();
         }
       } catch (error) {
@@ -97,6 +135,7 @@ export default function Login() {
             onChangeText={(password) => setPassword(password)}
           ></TextInput>
           <Button onPress={onSignIn} title="Login"></Button>
+          <Button onPress={googleSignIn} title="Sign in with Google"></Button>
           <Button onPress={onSignUp} title="Sign Up"></Button>
         </View>
       )}

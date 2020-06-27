@@ -45,9 +45,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const background = {
-  uri: require('../assets/MoneyToBurn.gif'),
-};
+const background = require('../assets/MoneyToBurn.gif');
 
 export default function HomeScreen({ navigation }) {
   const context = useContext(UserContext);
