@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { db } from './firebaseConfig';
-
-import Home from './screens/home';
-import Login from './screens/login';
-import GameSelector from './screens/gameSelector';
-import WaitingRoom from './screens/waitingRoom';
-import JoinRoom from './screens/joinRoom';
-import ClikBait from './screens/games/clickBait/clikBait';
-import Snek from './screens/games/snek/Snek';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import { ThemeProvider } from 'react-native-elements';
 import { RotationGestureHandler } from 'react-native-gesture-handler';
+
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { db } from './firebaseConfig';
+
+import { Home, Login, GameSelector, WaitingRoom, JoinRoom } from './screens';
+import { ClikBait, Snek, AsteroidAdventure } from './screens/games';
 
 const getFonts = () =>
   Font.loadAsync({
@@ -22,8 +18,6 @@ const getFonts = () =>
     hitv: require('./assets/fonts/HiTV.ttf'),
     gamejot: require('./assets/fonts/Gamejot.ttf'),
   });
-
-import AsteroidAdventure from './screens/games/asteroidAdventure/asteroidAdventure';
 
 const Stack = createStackNavigator();
 

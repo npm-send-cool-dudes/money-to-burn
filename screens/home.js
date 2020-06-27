@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginLeft: 150,
     fontSize: 45,
-    color: 'white',
+    color: 'black',
     fontFamily: 'gamejot',
   },
   headerBox: {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 });
 
 const background = {
-  uri: 'https://media.giphy.com/media/xT9DPofgEkyu9t4wPm/giphy.gif',
+  uri: require('../assets/MoneyToBurn.gif'),
 };
 
 export default function HomeScreen({ navigation }) {
