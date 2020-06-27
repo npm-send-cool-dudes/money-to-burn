@@ -21,9 +21,9 @@ import Box from './asteroidAdventureUtilities/box';
 import randomInt from 'random-int';
 import randomColor from 'randomcolor';
 import getRandomDecimal from './asteroidAdventureUtilities/getRandomDecimal';
-import roomCleanUp from '../utilFuncs/roomCleanUp';
+import roomCleanUp from '../../utilities/roomCleanUp';
 
-import { db } from '../firebaseConfig';
+import { db } from '../../../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useObjectVal, useListVals } from 'react-firebase-hooks/database';
 import random_name from 'node-random-name';
@@ -340,7 +340,7 @@ export default function App(props) {
             Object.keys(allScores).map((userKey) => {
               return (
                 <Text key={userKey} style={styles.text}>
-                  {random_name({seed: userKey})}: {allScores[userKey]}
+                  {random_name({ seed: userKey })}: {allScores[userKey]}
                 </Text>
               );
             })}
@@ -352,7 +352,7 @@ export default function App(props) {
           {winner.map((player) => (
             <Text key={player} style={styles.winner}>
               {'\n'}
-              {random_name({seed: player})}
+              {random_name({ seed: player })}
             </Text>
           ))}
         </Text>

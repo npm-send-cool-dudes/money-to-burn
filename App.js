@@ -9,7 +9,7 @@ import Login from './screens/login';
 import GameSelector from './screens/gameSelector';
 import WaitingRoom from './screens/waitingRoom';
 import JoinRoom from './screens/joinRoom';
-import ClikBait from './screens/clikBait';
+import ClikBait from './screens/games/clickBait/clikBait';
 import Snek from './screens/games/snek/Snek';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
@@ -23,7 +23,7 @@ const getFonts = () =>
     gamejot: require('./assets/fonts/Gamejot.ttf'),
   });
 
-import AsteroidAdventure from './screens/asteroidAdventure';
+import AsteroidAdventure from './screens/games/asteroidAdventure/asteroidAdventure';
 
 const Stack = createStackNavigator();
 
@@ -72,14 +72,22 @@ export default function App() {
           <Stack.Screen name="Login" options={header} component={Login} />
           {/* gameListStart */}
           {/* clickBait was labeled ClikBait which broke the app */}
-          <Stack.Screen name="clikBait" component={ClikBait} options={{ headerShown: false }}/>
+          <Stack.Screen
+            name="clikBait"
+            component={ClikBait}
+            options={{ headerShown: false }}
+          />
           {/* change name when finalized */}
           <Stack.Screen
             name="Asteroid Adventure"
             component={AsteroidAdventure}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="snek" component={Snek} options={{ headerShown: false }}/>
+          <Stack.Screen
+            name="snek"
+            component={Snek}
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

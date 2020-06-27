@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import {
   useListVals,
   useObjectVal,
