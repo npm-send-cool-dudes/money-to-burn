@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import { Button, Text } from 'react-native-elements';
+import { UserContext } from '../context/UserContext';
 
 const styles = StyleSheet.create({
   background: {
@@ -49,6 +50,8 @@ const background = {
 };
 
 export default function HomeScreen({ navigation }) {
+  const context = useContext(UserContext);
+
   return (
     <View style={styles.background}>
       <View style={styles.headerBox}>
@@ -70,10 +73,10 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate('JoinRoom')}
         />
         <Button
-          title="High Scores"
+          title="Logout"
           titleStyle={styles.buttonText}
           buttonStyle={styles.highScores}
-          onPress={() => navigation.navigate('HighScores')}
+          onPress={() => context.setLogout()}
         />
       </View>
     </View>
