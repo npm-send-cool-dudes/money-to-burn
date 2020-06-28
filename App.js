@@ -37,6 +37,7 @@ const theme = {
 const header = {
   headerTransparent: true,
   headerTitleStyle: { fontFamily: 'gamejot' },
+  headerTintColor: 'darkgray',
 };
 
 export default function App() {
@@ -55,20 +56,20 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen
             name="Home"
-            options={{ ...header, headerShown: false }}
+            options={{ headerShown: false }}
             component={Home}
           />
           <Stack.Screen
             name="GameSelector"
-            options={header}
+            options={{...header, title: 'Game Selector'}}
             component={GameSelector}
           />
           <Stack.Screen
             name="WaitingRoom"
-            options={header}
+            options={{...header, title: 'Waiting Room'}}
             component={WaitingRoom}
           />
-          <Stack.Screen name="JoinRoom" options={header} component={JoinRoom} />
+          <Stack.Screen name="JoinRoom" options={{...header, title: 'Join Room'}} component={JoinRoom} />
           <Stack.Screen name="Login" options={header} component={Login} />
           {/* gameListStart */}
           {/* clickBait was labeled ClikBait which broke the app */}

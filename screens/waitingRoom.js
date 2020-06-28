@@ -142,8 +142,7 @@ export default function WaitingRoom(props) {
 
 const styles = StyleSheet.create({
   logo: {
-    margin: 10,
-    marginRight: 40,
+    alignSelf: 'center'
   },
   room: {
     fontSize: 30,
@@ -161,6 +160,7 @@ const styles = StyleSheet.create({
     fontFamily: 'gamejot',
   },
   ready: {
+    marginTop: 30,
     backgroundColor: 'darkblue',
     borderRadius: 10,
   },
