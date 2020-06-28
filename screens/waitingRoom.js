@@ -83,7 +83,7 @@ export default function WaitingRoom(props) {
       db
         .database()
         .ref(`/Rooms/${roomName}/playerList/${uid}`)
-        .update({ uid: uid, status: false });
+        .update({ displayName: user.displayName, status: false });
     //why are we adding a UID to our UID object on playerList? is this where we'll eventually store player names?
   }, [uid]);
 
