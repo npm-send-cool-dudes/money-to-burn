@@ -138,7 +138,7 @@ const _setupCollisionHandler = (roomName, uid) => {
 
       const currentScoreRef = db
         .database()
-        .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
+        .ref(`/Rooms/${roomName}/Game/Scores/${uid}/score`);
       currentScoreRef.transaction((currentScore = 0) => {
         return currentScore + 1;
       });
@@ -202,8 +202,8 @@ export default function App(props) {
   //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
   useEffect(() => {
     db.database()
-      .ref(`/Rooms/${roomName}/Game/Scores/`)
-      .update({ [uid]: 0 });
+      .ref(`/Rooms/${roomName}/Game/Scores/${uid}`)
+      .update({ score: 0, displayName: user.displayName });
     db.database()
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
@@ -239,7 +239,7 @@ export default function App(props) {
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey] >= pointsToWin) {
+        if (allScores[userKey].score >= pointsToWin) {
           setWinner([userKey]);
         }
       });
@@ -335,7 +335,7 @@ export default function App(props) {
             Object.keys(allScores).map((userKey) => {
               return (
                 <Text key={userKey} style={styles.text}>
-                  {random_name({ seed: userKey })}: {allScores[userKey]}
+                  {allScores[userKey].displayName}: {allScores[userKey].score}
                 </Text>
               );
             })}
@@ -358,12 +358,15 @@ export default function App(props) {
       {winner && (
         <Text style={styles.winner}>
           Winner(s):
-          {winner.map((player) => (
-            <Text key={player} style={styles.winner}>
-              {'\n'}
-              {random_name({ seed: player })}
-            </Text>
-          ))}
+          {winner.map((player) => {
+            console.log('winner map player', player);
+            return (
+              <Text key={player} style={styles.winner}>
+                {'\n'}
+                {player.displayName}
+              </Text>
+            );
+          })}
         </Text>
       )}
       {winner && (
@@ -381,7 +384,7 @@ export default function App(props) {
             Object.keys(allScores).map((userKey) => {
               return (
                 <Text key={userKey} style={styles.text}>
-                  {random_name({ seed: userKey })}: {allScores[userKey]}
+                  {allScores[userKey].displayName}: {allScores[userKey].score}
                 </Text>
               );
             })}
