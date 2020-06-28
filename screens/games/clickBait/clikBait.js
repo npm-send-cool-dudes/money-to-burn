@@ -29,8 +29,10 @@ export default function ClikBait(props) {
 
   //TODO This can be removed if we want to keep score handling on the waiting room
   useEffect(() => {
-    const playerData = db.database().ref(`/Rooms/${roomName}/Game/Scores/`);
-    playerData.update({ [uid]: 0 });
+    const playerData = db
+      .database()
+      .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
+    playerData.update({ score: 0, displayName: user.displayName });
   }, []);
 
   //TODO look into refactoring, maybe remove useEffect
@@ -39,20 +41,20 @@ export default function ClikBait(props) {
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey] >= 10) {
+        if (allScores[userKey].score >= 10) {
           setWinner(userKey);
         }
       });
   }, [allScores]);
 
   const [personalScore] = useObjectVal(
-    db.database().ref(`/Rooms/${roomName}/Game/Scores/${uid}`)
+    db.database().ref(`/Rooms/${roomName}/Game/Scores/${uid}/score`)
   );
 
   function buttonPress() {
     const currentScoreRef = db
       .database()
-      .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
+      .ref(`/Rooms/${roomName}/Game/Scores/${uid}/score`);
     currentScoreRef.transaction((currentScore = 0) => {
       return currentScore + 1;
     });
@@ -92,10 +94,11 @@ export default function ClikBait(props) {
         <View style={{ zindex: 1 }}>
           {allScores &&
             Object.keys(allScores).map((userKey) => {
-              if (userKey !== uid) {
+              if (userKey.displayName !== user.displayName) {
                 return (
                   <Text style={styles.player} key={userKey}>
-                    {random_name({ seed: userKey })} Score: {allScores[userKey]}
+                    {allScores[userKey].displayName} Score:{' '}
+                    {allScores[userKey].score}
                   </Text>
                 );
               }
@@ -108,9 +111,7 @@ export default function ClikBait(props) {
           {winner === uid ? (
             <Text style={styles.player}>You Win!</Text>
           ) : (
-            <Text style={styles.player}>
-              {random_name({ seed: winner })} Wins!
-            </Text>
+            <Text style={styles.player}>{winner.displayName} Wins!</Text>
           )}
           <Button
             buttonStyle={styles.home}
