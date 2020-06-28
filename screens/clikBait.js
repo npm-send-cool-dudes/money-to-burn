@@ -88,7 +88,7 @@ useEffect(() => {
           />
       </View>}
       {!winner && (
-        <View>
+        <View style={{zindex: 1}}>
           {allScores &&
             Object.keys(allScores).map((userKey) => {
               if (userKey !== uid) {
