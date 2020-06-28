@@ -20,7 +20,7 @@ const QRcode = {
 
 export default function WaitingRoom(props) {
   const [user, loading, error] = useAuthState(db.auth());
-  console.log('user at waitingroom', user);
+  // console.log('user at waitingroom', user);
   let uid = user.uid;
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
@@ -55,7 +55,7 @@ export default function WaitingRoom(props) {
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
     //for when users join this game, roomName does not exist so users don't automatically navigate to the right game
-    console.log(roomName);
+    // console.log(roomName);
     navigation.navigate(nextGame, { roomName: roomName });
   }
 
@@ -124,7 +124,7 @@ export default function WaitingRoom(props) {
       <View style={{ margin: 10 }}>
         {players &&
           players.map((player) => {
-            console.log(player);
+            // console.log(player);
             return (
               <PlayerStatus
                 key={player.uid}
@@ -155,7 +155,7 @@ export default function WaitingRoom(props) {
 
 const styles = StyleSheet.create({
   logo: {
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   room: {
     fontSize: 30,

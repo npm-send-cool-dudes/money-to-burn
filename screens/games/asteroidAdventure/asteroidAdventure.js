@@ -248,20 +248,22 @@ export default function App(props) {
   useEffect(() => {
     if (aliveStatusRoom && !Object.values(aliveStatusRoom).includes(true)) {
       const scores = Object.entries(allScores);
+      console.log('scores', scores);
       let winnersAndScores = [];
       scores.forEach((player, index) => {
         if (index === 0) {
           winnersAndScores.push(player);
         } else {
-          if (player[1] > winnersAndScores[0][1]) {
+          if (player[1].score > winnersAndScores[0][1].score) {
             winnersAndScores = [player];
-          } else if (player[1] === winnersAndScores[0][1]) {
+          } else if (player[1].score === winnersAndScores[0][1].score) {
             winnersAndScores.push(player);
           }
         }
       });
       const winners = winnersAndScores.map((p) => p[0]);
-
+      console.log('winners', winners);
+      console.log('winnersandscores', winnersAndScores);
       setWinner(winners);
     }
   }, [aliveStatusRoom]);
