@@ -39,6 +39,7 @@ const theme = {
 const header = {
   headerTransparent: true,
   headerTitleStyle: { fontFamily: 'gamejot' },
+  headerTintColor: 'darkgray',
 };
 
 export default function App() {
@@ -80,17 +81,17 @@ export default function App() {
             />
             <Stack.Screen
               name="GameSelector"
-              options={header}
+              options={{ ...header, title: 'Game Selector' }}
               component={GameSelector}
             />
             <Stack.Screen
               name="WaitingRoom"
-              options={header}
+              options={{ ...header, title: 'Waiting Room' }}
               component={WaitingRoom}
             />
             <Stack.Screen
               name="JoinRoom"
-              options={header}
+              options={{ ...header, title: 'Join Room' }}
               component={JoinRoom}
             />
             {/* gameListStart */}

@@ -89,7 +89,7 @@ export default function ClikBait(props) {
         </View>
       )}
       {!winner && (
-        <View>
+        <View style={{ zindex: 1 }}>
           {allScores &&
             Object.keys(allScores).map((userKey) => {
               if (userKey !== uid) {
@@ -105,9 +105,13 @@ export default function ClikBait(props) {
       )}
       {winner && (
         <View>
-          <Text style={styles.player}>
-            {random_name({ seed: winner })} Wins!
-          </Text>
+          {winner === uid ? (
+            <Text style={styles.player}>You Win!</Text>
+          ) : (
+            <Text style={styles.player}>
+              {random_name({ seed: winner })} Wins!
+            </Text>
+          )}
           <Button
             buttonStyle={styles.home}
             titleStyle={styles.buttonText}
@@ -122,6 +126,7 @@ export default function ClikBait(props) {
 
 const styles = StyleSheet.create({
   player: {
+    alignSelf: 'center',
     color: 'gray',
     fontSize: 20,
     fontFamily: 'gamejot',
