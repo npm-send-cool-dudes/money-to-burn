@@ -94,7 +94,7 @@ export default function ClikBait(props) {
         <View style={{ zindex: 1 }}>
           {allScores &&
             Object.keys(allScores).map((userKey) => {
-              if (userKey.displayName !== user.displayName) {
+              if (allScores[userKey].displayName !== user.displayName) {
                 return (
                   <Text style={styles.player} key={userKey}>
                     {allScores[userKey].displayName} Score:{' '}
