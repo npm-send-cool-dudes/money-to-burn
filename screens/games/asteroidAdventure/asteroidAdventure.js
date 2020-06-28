@@ -359,11 +359,11 @@ export default function App(props) {
         <Text style={styles.winner}>
           Winner(s):
           {winner.map((player) => {
-            console.log('winner map player', player);
+            // console.log('winner map player', player, winner);
             return (
               <Text key={player} style={styles.winner}>
                 {'\n'}
-                {player.displayName}
+                {allScores[player].displayName}
               </Text>
             );
           })}
