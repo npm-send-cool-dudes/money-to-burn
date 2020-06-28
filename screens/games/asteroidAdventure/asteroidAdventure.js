@@ -363,7 +363,7 @@ export default function App(props) {
             return (
               <Text key={player} style={styles.winner}>
                 {'\n'}
-                {allScores[player].displayName}
+                {allScores && allScores[player].displayName}
               </Text>
             );
           })}
