@@ -122,13 +122,14 @@ const _getEntities = () => {
   return entities;
 };
 
-const _setupCollisionHandler = (onHit, roomName, uid) => {
+const _setupCollisionHandler = (roomName, uid) => {
   Matter.Events.on(engine, 'collisionStart', (event) => {
     var pairs = event.pairs;
 
     var objA = pairs[0].bodyA.label;
     var objB = pairs[0].bodyB.label;
 
+    //if player dodged object, set new position of block at top
     if (objA === 'floor' && objB === 'debris') {
       Matter.Body.setPosition(pairs[0].bodyB, {
         x: randomInt(1, width - 30),
@@ -143,19 +144,16 @@ const _setupCollisionHandler = (onHit, roomName, uid) => {
       });
     }
 
-    onHit(objA, objB, roomName, uid);
+    //if player get hits by debris
+    if (objA === 'ball' && objB === 'debris') {
+      db.database()
+        .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+        .update({ [uid]: false });
+    }
   });
 };
 
-const onHit = (objA, objB, roomName, uid) => {
-  if (objA === 'ball' && objB === 'debris') {
-    db.database()
-      .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
-      .update({ [uid]: false });
-  }
-};
-
-//reset position and velocityu of all blocks
+//reset position and velocity of all blocks
 const reset = () => {
   debris.forEach((debrisItem) => {
     Matter.Body.set(debrisItem, {
@@ -192,6 +190,7 @@ export default function App(props) {
   const [allScores] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/Scores`)
   );
+
   const [aliveStatusRoom] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
@@ -209,7 +208,7 @@ export default function App(props) {
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
     _toggle();
-    _setupCollisionHandler(onHit, roomName, uid);
+    _setupCollisionHandler(roomName, uid);
   }, []);
 
   const _toggle = () => {
