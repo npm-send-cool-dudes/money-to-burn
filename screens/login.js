@@ -8,8 +8,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { UserContext } from '../context/UserContext';
-
+import random_name from 'node-random-name';
 import { db } from '../firebaseConfig';
+import { set } from 'react-native-reanimated';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import PlayerStatus from './utilities/playerStatus';
 
 export default function Login() {
   //storing login status in usercontext, basically a stripped down redux
@@ -30,9 +33,10 @@ export default function Login() {
           const user = await db
             .database()
             .ref('Users/')
-            .child(response.user.email)
+            .child(response.user.uid)
             .set({
               uid: response.user.uid,
+              email: response.user.email,
               stacks: 1000,
             });
 
@@ -59,6 +63,7 @@ export default function Login() {
           .auth()
           .signInWithEmailAndPassword(email, password);
         if (response) {
+          db;
           setLoading(false);
 
           setLogIn();
@@ -80,6 +85,31 @@ export default function Login() {
       alert('Please enter email and password');
     }
   };
+
+  const noAuthSignIn = async () => {
+    setLoading(true);
+    try {
+      const response = await db.auth().signInAnonymously();
+      if (response) {
+        console.log(response);
+        let dbVal =
+          response &&
+          (await db.database().ref('Users/').child(response.user.uid).set({
+            stacks: 1000,
+          }));
+        response.user.updateProfile({
+          displayName: random_name({ seed: response.user.uid }),
+        });
+        // console.log(user);
+        setLoading(false);
+        setLogIn();
+      }
+    } catch (error) {
+      console.log('error code', error.code);
+      console.log('error message', error.message);
+    }
+  };
+
   //when loading, show a spinner (Activity indicator) otherwise continue
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -113,6 +143,7 @@ export default function Login() {
           <Button onPress={onSignIn} title="Login"></Button>
           {/* <Button onPress={googleSignIn} title="Sign in with Google"></Button> */}
           <Button onPress={onSignUp} title="Sign Up"></Button>
+          <Button onPress={noAuthSignIn} title="Anonymous sign in"></Button>
         </View>
       )}
     </View>

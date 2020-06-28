@@ -75,7 +75,7 @@ export default function App() {
             )}
             <Stack.Screen
               name="AccountOptions"
-              options={{ ...header, headerShown: false }}
+              // options={{ ...header, headerShown: false }}
               component={AccountOptions}
             />
             <Stack.Screen
