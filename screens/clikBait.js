@@ -104,7 +104,10 @@ useEffect(() => {
       )}
       {winner && (
         <View>
+          {winner === uid? 
+          <Text style={styles.player}>You Win!</Text> :
           <Text style={styles.player}>{random_name({seed: winner})} Wins!</Text>
+          }
           <Button
             buttonStyle={styles.home}
             titleStyle={styles.buttonText}
@@ -119,6 +122,7 @@ useEffect(() => {
 
 const styles = StyleSheet.create({
   player: {
+    alignSelf: 'center',
     color: 'gray',
     fontSize: 20,
     fontFamily: 'gamejot',
