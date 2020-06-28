@@ -71,10 +71,10 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate('JoinRoom')}
         />
         <Button
-          title="Logout"
+          title="AccountOptions"
           titleStyle={styles.buttonText}
           buttonStyle={styles.highScores}
-          onPress={() => context.setLogout()}
+          onPress={() => navigation.navigate('AccountOptions')}
         />
       </View>
     </View>

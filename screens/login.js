@@ -12,11 +12,13 @@ import { UserContext } from '../context/UserContext';
 import { db } from '../firebaseConfig';
 
 export default function Login() {
+  //storing login status in usercontext, basically a stripped down redux
   const { setLogIn } = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  //validation logic and creating db object to be modified
   const onSignUp = async () => {
     if (email && password) {
       setLoading(true);
@@ -78,6 +80,7 @@ export default function Login() {
       alert('Please enter email and password');
     }
   };
+  //when loading, show a spinner (Activity indicator) otherwise continue
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       {loading ? (

@@ -16,7 +16,7 @@ const QRcode = {
 
 export default function WaitingRoom(props) {
   const [user, loading, error] = useAuthState(db.auth());
-
+  console.log('user at waitingroom', user);
   let uid = user.uid;
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
@@ -106,8 +106,8 @@ export default function WaitingRoom(props) {
         backgroundColor: '#E5FDFF',
       }}
     >
-   <Image source={QRcode} style={styles.logo} />
-  
+      <Image source={QRcode} style={styles.logo} />
+
       <Text style={styles.room}>{roomName}</Text>
       {loading && <Text> loading players... </Text>}
 
@@ -116,12 +116,14 @@ export default function WaitingRoom(props) {
           players.map((player) => (
             <PlayerStatus
               key={player.uid}
-              name={random_name({seed: player.uid})}
+              name={random_name({ seed: player.uid })}
               status={player.status ? 'Ready' : 'Waiting'}
             />
           ))}
       </View>
-      {uid && <Text style={styles.user}>you: {random_name({seed: uid})} </Text>}
+      {uid && (
+        <Text style={styles.user}>you: {random_name({ seed: uid })} </Text>
+      )}
       <Button
         title="Ready!"
         buttonStyle={styles.ready}

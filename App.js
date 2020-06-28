@@ -9,7 +9,14 @@ import { RotationGestureHandler } from 'react-native-gesture-handler';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { db } from './firebaseConfig';
 
-import { Home, Login, GameSelector, WaitingRoom, JoinRoom } from './screens';
+import {
+  Home,
+  Login,
+  GameSelector,
+  WaitingRoom,
+  JoinRoom,
+  AccountOptions,
+} from './screens';
 import { ClikBait, Snek, AsteroidAdventure } from './screens/games';
 import { UserContext } from './context/UserContext';
 
@@ -46,7 +53,7 @@ export default function App() {
     setLoggedIn(false);
   };
 
-  console.log('home login id', user && user.uid);
+  user && console.log('home login id', user && user.uid);
   if (!fontsLoaded) {
     return (
       <AppLoading startAsync={getFonts} onFinish={() => setFontsLoaded(true)} />
@@ -66,7 +73,11 @@ export default function App() {
                 component={Home}
               />
             )}
-
+            <Stack.Screen
+              name="AccountOptions"
+              options={{ ...header, headerShown: false }}
+              component={AccountOptions}
+            />
             <Stack.Screen
               name="GameSelector"
               options={header}
