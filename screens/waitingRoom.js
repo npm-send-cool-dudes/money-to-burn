@@ -2,10 +2,14 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
-import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
+import {
+  useListVals,
+  useObjectVal,
+  useList,
+} from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Button } from 'react-native-elements';
-import random_name from 'node-random-name';
+// import random_name from 'node-random-name';
 
 const QRcode = {
   uri:
@@ -16,7 +20,7 @@ const QRcode = {
 
 export default function WaitingRoom(props) {
   const [user, loading, error] = useAuthState(db.auth());
-
+  console.log('user at waitingroom', user);
   let uid = user.uid;
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
@@ -28,19 +32,25 @@ export default function WaitingRoom(props) {
 
   const [status] = useObjectVal(playerStatus);
 
-  let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
-  const [players] = useListVals(playerList);
+  let [players] = useListVals(
+    db.database().ref(`/Rooms/${roomName}/playerList/`)
+  );
+  // const [players] = useListVals(playerList);
   //removed useeffect and put in firebase hook
 
-  let roomStatusData = db.database().ref(`/Rooms/${roomName}/status`);
-  const [roomStatus] = useObjectVal(roomStatusData);
+  let [roomStatus] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/status`)
+  );
+  // const [roomStatus] = useObjectVal(roomStatusData);
 
   //grabbing nextGame from the DB
-  let nextGameData = db.database().ref(`/Rooms/${roomName}/Game/Name`);
-  const [nextGame] = useObjectVal(nextGameData);
+  let [nextGame] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/Game/Name`)
+  );
+  // const [nextGame] = useObjectVal(nextGameData);
 
-  let gameObj = db.database().ref(`/GamesList/${gameName}`);
-  const [gameRules] = useObjectVal(gameObj);
+  let [gameRules] = useObjectVal(db.database().ref(`/GamesList/${gameName}`));
+  // const [gameRules] = useObjectVal(gameObj);
 
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
@@ -73,7 +83,7 @@ export default function WaitingRoom(props) {
       db
         .database()
         .ref(`/Rooms/${roomName}/playerList/${uid}`)
-        .update({ uid: uid, status: false });
+        .update({ displayName: user.displayName, status: false });
     //why are we adding a UID to our UID object on playerList? is this where we'll eventually store player names?
   }, [uid]);
 
@@ -106,22 +116,25 @@ export default function WaitingRoom(props) {
         backgroundColor: '#E5FDFF',
       }}
     >
-   <Image source={QRcode} style={styles.logo} />
-  
+      <Image source={QRcode} style={styles.logo} />
+
       <Text style={styles.room}>{roomName}</Text>
       {loading && <Text> loading players... </Text>}
 
       <View style={{ margin: 10 }}>
         {players &&
-          players.map((player) => (
-            <PlayerStatus
-              key={player.uid}
-              name={random_name({seed: player.uid})}
-              status={player.status ? 'Ready' : 'Waiting'}
-            />
-          ))}
+          players.map((player) => {
+            console.log(player);
+            return (
+              <PlayerStatus
+                key={player.uid}
+                name={player.displayName}
+                status={player.status ? 'Ready' : 'Waiting'}
+              />
+            );
+          })}
       </View>
-      {uid && <Text style={styles.user}>you: {random_name({seed: uid})} </Text>}
+      {uid && <Text style={styles.user}>you: {user.displayName} </Text>}
       <Button
         title="Ready!"
         buttonStyle={styles.ready}
@@ -142,8 +155,7 @@ export default function WaitingRoom(props) {
 
 const styles = StyleSheet.create({
   logo: {
-    margin: 10,
-    marginRight: 40,
+    alignSelf: 'center'
   },
   room: {
     fontSize: 30,
@@ -161,6 +173,7 @@ const styles = StyleSheet.create({
     fontFamily: 'gamejot',
   },
   ready: {
+    marginTop: 30,
     backgroundColor: 'darkblue',
     borderRadius: 10,
   },

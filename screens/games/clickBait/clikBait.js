@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions} from 'react-native';
-import { db } from '../firebaseConfig';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { db } from '../../../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import roomCleanUp from '../utilFuncs/roomCleanUp';
+import roomCleanUp from '../../utilities/roomCleanUp';
 import { useListVals, useObjectVal } from 'react-firebase-hooks/database';
 import random_name from 'node-random-name';
 import { Button } from 'react-native-elements';
@@ -11,7 +11,6 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 export default function ClikBait(props) {
-
   const [winner, setWinner] = useState();
 
   const [user, loading, error] = useAuthState(db.auth());
@@ -66,35 +65,37 @@ export default function ClikBait(props) {
   currentScores
   targetScore (win condition)
 */
-const [top,setTop]=useState(0);
-const [left,setLeft]=useState(0)
+  const [top, setTop] = useState(0);
+  const [left, setLeft] = useState(0);
 
-useEffect(() => {
-  const timer = setTimeout(() => {
-    setTop(Math.abs(Math.floor(Math.random()*(height)-120)));
-    setLeft(Math.abs(Math.floor(Math.random()*(width)-120)));
-  }, 500);
-  return () => clearTimeout(timer);
-}, [top]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTop(Math.abs(Math.floor(Math.random() * height - 120)));
+      setLeft(Math.abs(Math.floor(Math.random() * width - 120)));
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [top]);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {!winner && <View style={{position: "absolute",top: top, left: left, zindex:2}}>
-          <Button 
-          buttonStyle={styles.click}
-          titleStyle={styles.buttonText}
-          onPress={buttonPress} 
-          title="click me"
-          />
-      </View>}
       {!winner && (
-        <View>
+        <View style={{ position: 'absolute', top: top, left: left, zindex: 2 }}>
+          <Button
+            buttonStyle={styles.click}
+            titleStyle={styles.buttonText}
+            onPress={buttonPress}
+            title="click me"
+          />
+        </View>
+      )}
+      {!winner && (
+        <View style={{ zindex: 1 }}>
           {allScores &&
             Object.keys(allScores).map((userKey) => {
               if (userKey !== uid) {
                 return (
                   <Text style={styles.player} key={userKey}>
-                    {random_name({seed: userKey})} Score: {allScores[userKey]}
+                    {random_name({ seed: userKey })} Score: {allScores[userKey]}
                   </Text>
                 );
               }
@@ -104,7 +105,13 @@ useEffect(() => {
       )}
       {winner && (
         <View>
-          <Text style={styles.player}>{random_name({seed: winner})} Wins!</Text>
+          {winner === uid ? (
+            <Text style={styles.player}>You Win!</Text>
+          ) : (
+            <Text style={styles.player}>
+              {random_name({ seed: winner })} Wins!
+            </Text>
+          )}
           <Button
             buttonStyle={styles.home}
             titleStyle={styles.buttonText}
@@ -119,6 +126,7 @@ useEffect(() => {
 
 const styles = StyleSheet.create({
   player: {
+    alignSelf: 'center',
     color: 'gray',
     fontSize: 20,
     fontFamily: 'gamejot',
@@ -137,8 +145,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   random: {
-    position: "absolute",
-    top: Math.floor(Math.random()*500),
-    left: Math.floor(Math.random()*500),
-  }
+    position: 'absolute',
+    top: Math.floor(Math.random() * 500),
+    left: Math.floor(Math.random() * 500),
+  },
 });

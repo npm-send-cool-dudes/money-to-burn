@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import { Button, Text } from 'react-native-elements';
+import { UserContext } from '../context/UserContext';
 
 const styles = StyleSheet.create({
   background: {
@@ -13,7 +14,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginLeft: 150,
     fontSize: 45,
-    color: 'white',
+    color: 'black',
     fontFamily: 'gamejot',
   },
   headerBox: {
@@ -44,11 +45,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const background = {
-  uri: 'https://media.giphy.com/media/xT9DPofgEkyu9t4wPm/giphy.gif',
-};
+const background = require('../assets/MoneyToBurn.gif');
 
 export default function HomeScreen({ navigation }) {
+  const context = useContext(UserContext);
+
   return (
     <View style={styles.background}>
       <View style={styles.headerBox}>
@@ -70,10 +71,10 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate('JoinRoom')}
         />
         <Button
-          title="High Scores"
+          title="AccountOptions"
           titleStyle={styles.buttonText}
           buttonStyle={styles.highScores}
-          onPress={() => navigation.navigate('HighScores')}
+          onPress={() => navigation.navigate('AccountOptions')}
         />
       </View>
     </View>

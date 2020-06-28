@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, ScrollView, View, SafeAreaView } from 'react-native';
 import GameCard from './utilities/gameCard';
 import { useListKeys } from 'react-firebase-hooks/database';
 import { db } from '../firebaseConfig';
@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: '#E5FDFF',
-    marginTop: 50
+    paddingVertical: 60
   },
 });
 
@@ -17,9 +17,10 @@ export default function GameSelector({ navigation }) {
     db.database().ref('/GamesList/')
   );
   // TODO map over gameslist to render GameCards
-  console.log('gameslist', gamesList);
+  // console.log('gameslist', gamesList);
   return (
-    <ScrollView style={styles.background}>
+  
+      <ScrollView style={styles.background}>
       {gamesList.map((game, index) => (
         <GameCard
           key={gamesList[index]}
@@ -28,5 +29,8 @@ export default function GameSelector({ navigation }) {
         />
       ))}
     </ScrollView>
+
+
   );
+
 }

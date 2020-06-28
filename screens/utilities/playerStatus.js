@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
 });
 
 export default function PlayerStatus(props) {
+  console.log(props.displayName);
   return (
     <View
       style={{
