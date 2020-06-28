@@ -7,7 +7,6 @@ import {
   Dimensions,
   View,
   ImageBackground,
-  Alert,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 
@@ -123,18 +122,49 @@ const _getEntities = () => {
   return entities;
 };
 
+const _setupCollisionHandler = (onHit, roomName, uid) => {
+  Matter.Events.on(engine, 'collisionStart', (event) => {
+    var pairs = event.pairs;
+
+    var objA = pairs[0].bodyA.label;
+    var objB = pairs[0].bodyB.label;
+
+    if (objA === 'floor' && objB === 'debris') {
+      Matter.Body.setPosition(pairs[0].bodyB, {
+        x: randomInt(1, width - 30),
+        y: randomInt(0, 200),
+      });
+
+      const currentScoreRef = db
+        .database()
+        .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
+      currentScoreRef.transaction((currentScore = 0) => {
+        return currentScore + 1;
+      });
+    }
+
+    onHit(objA, objB, roomName, uid);
+  });
+};
+
+const onHit = (objA, objB, roomName, uid) => {
+  if (objA === 'ball' && objB === 'debris') {
+    db.database()
+      .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+      .update({ [uid]: false });
+  }
+};
+
 //reset position and velocityu of all blocks
 const reset = () => {
   debris.forEach((debrisItem) => {
     Matter.Body.set(debrisItem, {
       velocity: { x: 0, y: 0 },
+      isStatic: false,
     });
   });
   debris.forEach((debris) => {
     // loop through all the blocks
-    Matter.Body.set(debris, {
-      isStatic: false, // make the block susceptible to gravity again
-    });
     Matter.Body.setPosition(debris, {
       // set new position for the block
       x: randomInt(1, width - 30),
@@ -166,43 +196,9 @@ export default function App(props) {
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus`)
   );
 
-  const _setupCollisionHandler = () => {
-    Matter.Events.on(engine, 'collisionStart', (event) => {
-      var pairs = event.pairs;
-
-      var objA = pairs[0].bodyA.label;
-      var objB = pairs[0].bodyB.label;
-
-      if (objA === 'floor' && objB === 'debris') {
-        Matter.Body.setPosition(pairs[0].bodyB, {
-          x: randomInt(1, width - 30),
-          y: randomInt(0, 200),
-        });
-
-        const currentScoreRef = db
-          .database()
-          .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
-        currentScoreRef.transaction((currentScore = 0) => {
-          return currentScore + 1;
-        });
-      }
-
-      if (objA === 'ball' && objB === 'debris') {
-        Alert.alert('Game Over');
-        db.database()
-          .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
-          .update({ [uid]: false });
-
-        // stop all blocks once dead
-        debris.forEach((debris) => {
-          // loop through all the blocks
-          Matter.Body.set(debris, {
-            isStatic: true,
-          });
-        });
-      }
-    });
-  };
+  const [aliveStatusPlayer] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/Game/AliveStatus/${uid}`)
+  );
 
   //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
   useEffect(() => {
@@ -213,7 +209,7 @@ export default function App(props) {
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
     _toggle();
-    _setupCollisionHandler();
+    _setupCollisionHandler(onHit, roomName, uid);
   }, []);
 
   const _toggle = () => {
@@ -334,17 +330,31 @@ export default function App(props) {
           'https://i.pinimg.com/originals/c9/46/27/c94627ca6c5147bc87157df09027ded3.gif',
       }}
     >
-      {!winner && (
+      {!winner && aliveStatusPlayer && (
         <GameEngine systems={[Physics]} entities={_getEntities()}>
           {allScores &&
             Object.keys(allScores).map((userKey) => {
               return (
                 <Text key={userKey} style={styles.text}>
-                  {random_name({seed: userKey})}: {allScores[userKey]}
+                  {random_name({ seed: userKey })}: {allScores[userKey]}
                 </Text>
               );
             })}
         </GameEngine>
+      )}
+      {!winner && aliveStatusPlayer && (
+        <View style={styles.controls}>
+          <Button
+            buttonStyle={styles.decrease}
+            title="Brake"
+            onPress={decreaseGravity}
+          />
+          <Button
+            buttonStyle={styles.increase}
+            title="Accelerate"
+            onPress={increaseGravity}
+          />
+        </View>
       )}
       {winner && (
         <Text style={styles.winner}>
@@ -352,7 +362,7 @@ export default function App(props) {
           {winner.map((player) => (
             <Text key={player} style={styles.winner}>
               {'\n'}
-              {random_name({seed: player})}
+              {random_name({ seed: player })}
             </Text>
           ))}
         </Text>
@@ -365,18 +375,19 @@ export default function App(props) {
           GO HOME!
         </Button>
       )}
-      <View style={styles.controls}>
-        <Button
-          buttonStyle={styles.decrease}
-          title="Brake"
-          onPress={decreaseGravity}
-        />
-        <Button
-          buttonStyle={styles.increase}
-          title="Accelerate"
-          onPress={increaseGravity}
-        />
-      </View>
+      {!winner && !aliveStatusPlayer && (
+        <View>
+          <Text style={styles.gameOver}>GAME OVER</Text>
+          {allScores &&
+            Object.keys(allScores).map((userKey) => {
+              return (
+                <Text key={userKey} style={styles.text}>
+                  {random_name({ seed: userKey })}: {allScores[userKey]}
+                </Text>
+              );
+            })}
+        </View>
+      )}
     </ImageBackground>
   );
 }
@@ -410,5 +421,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: 'center',
     marginTop: height / 2 - height / 6,
+  },
+  gameOver: {
+    textAlign: 'center',
+    padding: 5,
+    color: 'white',
+    fontSize: 50,
   },
 });
