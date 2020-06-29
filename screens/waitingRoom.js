@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
@@ -25,6 +25,7 @@ export default function WaitingRoom(props) {
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
+  const [bet, setBet] = useState(0);
 
   let [dbUserObj, dbUserObjLoading] = useObjectVal(
     db.database().ref(`/Users/${uid}`)
@@ -43,6 +44,9 @@ export default function WaitingRoom(props) {
     db.database().ref(`/Rooms/${roomName}/status`)
   );
 
+  let [bettingRoom] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/Bets`)
+  );
   //grabbing nextGame from the DB
   let [nextGame] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/Name`)
@@ -62,12 +66,22 @@ export default function WaitingRoom(props) {
     })
     .includes(false);
 
+  // useEffect(() => {
+  //   db.database()
+  //     .ref(`/Rooms/${roomName}/Bets`)
+  //     .set({ [uid]: bet });
+  // }, [players]);
+
   useEffect(() => {
     //added another line to the useffect to give the room a false statement
     db.database().ref(`/Rooms/${roomName}`).update({ status: false });
     //if you join the room, you don't have access to the gameName prop, so i set this up so when the first user creates the game, it gets pushed to the room. This is where all clients can access the next game for now. THis will be updates as we move the actual game rules onto the room object
     gameName &&
       db.database().ref(`/Rooms/${roomName}/Game`).update({ Name: gameName });
+
+    db.database()
+      .ref(`/Rooms/${roomName}/Bets`)
+      .update({ [uid]: bet });
 
     //TODO i added the scoreboard functionality on here. I decided to undo it as it does make more sense to add the scores based on the game. What if snake doesn't use scores? it is here though in case somebody decided to go that route.
     // uid &&
@@ -115,7 +129,7 @@ export default function WaitingRoom(props) {
         backgroundColor: '#E5FDFF',
       }}
     >
-      <BetTracker></BetTracker>
+      <BetTracker roomName={roomName} bet={bet} setBet={setBet}></BetTracker>
       {/* <Image source={QRcode} style={styles.logo} /> */}
 
       <Text style={styles.room}>Room Number: {roomName}</Text>

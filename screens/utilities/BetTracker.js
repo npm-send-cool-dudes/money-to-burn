@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
+import { db } from '../../firebaseConfig';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useListVals } from 'react-firebase-hooks/database';
 
-const BetTracker = () => {
+const BetTracker = ({ roomName, bet, setBet }) => {
+  const [user, userLoading, error] = useAuthState(db.auth());
+
+  const [bettingRoom, roomLoading] = useListVals(
+    db.database().ref(`/Rooms/${roomName}/Bets`)
+  );
+
+  let uid = user.uid;
+
+  useEffect(() => {
+    console.log(bettingRoom);
+  }, [bettingRoom]);
+  function submitBet() {
+    const currentBetRef = db
+      .database()
+      .ref(`/Rooms/${roomName}/Bets/`)
+      .update({ [uid]: bet });
+  }
+
   return (
     <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
       <Text
@@ -14,19 +35,7 @@ const BetTracker = () => {
           justifySelf: 'flex-end',
         }}
       >
-        Money in the Pot
-      </Text>
-      <br></br>
-      <Text
-        style={{
-          fontSize: 30,
-          color: 'black',
-          fontFamily: 'shortstack',
-          alignSelf: 'center',
-          justifySelf: 'flex-end',
-        }}
-      >
-        0
+        Put {bet} stacks on the line?
       </Text>
       <View
         style={{
@@ -41,7 +50,7 @@ const BetTracker = () => {
           titleStyle={styles.buttonText}
           buttonStyle={styles.add}
           onPress={() => {
-            console.log('ADD');
+            setBet(bet + 1);
           }}
         />
         <Button
@@ -49,12 +58,43 @@ const BetTracker = () => {
           titleStyle={styles.buttonText}
           buttonStyle={styles.subtract}
           onPress={() => {
-            console.log('subtract');
+            bet >= 1 ? setBet(bet - 1) : null;
           }}
-        >
-          -
-        </Button>
+        ></Button>
       </View>
+      <Button
+        title="Place Bet!"
+        titleStyle={styles.buttonText}
+        buttonStyle={styles.subtract}
+        onPress={submitBet}
+      ></Button>
+      <Text
+        style={{
+          fontSize: 30,
+          color: 'black',
+          fontFamily: 'shortstack',
+          alignSelf: 'center',
+          justifySelf: 'flex-end',
+        }}
+      >
+        Money in the Pot
+      </Text>
+
+      <Text
+        style={{
+          fontSize: 30,
+          color: 'black',
+          fontFamily: 'shortstack',
+          alignSelf: 'center',
+          justifySelf: 'flex-end',
+        }}
+      >
+        {!roomLoading && bettingRoom && bettingRoom.length > 0
+          ? bettingRoom.reduce(
+              (accumulator, currentValue) => accumulator + currentValue
+            )
+          : null}
+      </Text>
     </View>
   );
 };
