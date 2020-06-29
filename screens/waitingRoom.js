@@ -26,6 +26,8 @@ export default function WaitingRoom(props) {
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
 
+  let [dbUserObj] = useObjectVal(db.database().ref(`/Users/${uid}`));
+  console.log(dbUserObj);
   let playerStatus = db
     .database()
     .ref(`/Rooms/${roomName}/playerList/${uid}/status`);
@@ -134,7 +136,9 @@ export default function WaitingRoom(props) {
             );
           })}
       </View>
-      {uid && <Text style={styles.user}>you: {user.displayName} </Text>}
+      {uid && dbUserObj && (
+        <Text style={styles.user}>stacks: {dbUserObj.stacks} </Text>
+      )}
       <Button
         title="Ready!"
         buttonStyle={styles.ready}
