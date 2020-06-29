@@ -9,6 +9,7 @@ import {
 } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Button } from 'react-native-elements';
+import BetTracker from './utilities/BetTracker';
 // import random_name from 'node-random-name';
 
 const QRcode = {
@@ -20,7 +21,6 @@ const QRcode = {
 
 export default function WaitingRoom(props) {
   const [user, loading, error] = useAuthState(db.auth());
-  // console.log('user at waitingroom', user);
   let uid = user.uid;
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
@@ -29,7 +29,6 @@ export default function WaitingRoom(props) {
   let [dbUserObj, dbUserObjLoading] = useObjectVal(
     db.database().ref(`/Users/${uid}`)
   );
-  console.log(dbUserObj);
   let playerStatus = db
     .database()
     .ref(`/Rooms/${roomName}/playerList/${uid}/status`);
@@ -39,27 +38,21 @@ export default function WaitingRoom(props) {
   let [players] = useListVals(
     db.database().ref(`/Rooms/${roomName}/playerList/`)
   );
-  // const [players] = useListVals(playerList);
-  //removed useeffect and put in firebase hook
 
   let [roomStatus] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/status`)
   );
-  // const [roomStatus] = useObjectVal(roomStatusData);
 
   //grabbing nextGame from the DB
   let [nextGame] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/Name`)
   );
-  // const [nextGame] = useObjectVal(nextGameData);
 
   let [gameRules] = useObjectVal(db.database().ref(`/GamesList/${gameName}`));
-  // const [gameRules] = useObjectVal(gameObj);
 
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
     //for when users join this game, roomName does not exist so users don't automatically navigate to the right game
-    // console.log(roomName);
     navigation.navigate(nextGame, { roomName: roomName });
   }
 
@@ -86,7 +79,7 @@ export default function WaitingRoom(props) {
     uid &&
       dbUserObj &&
       db.database().ref(`/Rooms/${roomName}/playerList/${uid}`).update({
-        displayName: user.displayName,
+        displayName: dbUserObj.displayName,
         status: false,
         stacks: dbUserObj.stacks,
       });
@@ -122,15 +115,15 @@ export default function WaitingRoom(props) {
         backgroundColor: '#E5FDFF',
       }}
     >
-      <Image source={QRcode} style={styles.logo} />
+      <BetTracker></BetTracker>
+      {/* <Image source={QRcode} style={styles.logo} /> */}
 
-      <Text style={styles.room}>{roomName}</Text>
+      <Text style={styles.room}>Room Number: {roomName}</Text>
       {loading && <Text> loading players... </Text>}
 
       <View style={{ margin: 10 }}>
         {players &&
           players.map((player) => {
-            // console.log(player);
             return (
               <PlayerStatus
                 key={player.uid}

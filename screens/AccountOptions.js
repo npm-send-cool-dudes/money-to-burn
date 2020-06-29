@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Button, Input } from 'react-native-elements';
+
 import { db } from '../firebaseConfig';
 import { useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -23,11 +25,12 @@ const AccountOptions = ({ navigation }) => {
   };
 
   return (
-    <View>
-      <TextInput
+    <View style={styles.background}>
+      <Input
         placeholder="new name!"
         onChangeText={(name) => setName(name)}
-      ></TextInput>
+        inputStyle={{ fontFamily: 'shortstack', fontSize: 30, width: 100 }}
+      ></Input>
 
       <Button
         title="Update Name!"
