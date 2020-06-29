@@ -33,7 +33,7 @@ export default function roomCleanUp(
         .once('value', (user) => console.log(user))
         .then((ret) => (userVals = ret.val()));
 
-      stacksLost = userVals.stacks + bettingRoom[uid];
+      stacksLost = userVals.stacks - bettingRoom[uid];
     } catch (error) {
       console.log(error);
     }
@@ -43,7 +43,7 @@ export default function roomCleanUp(
     // console.log('userVals', userVals);
 
     // console.log(bettingRoom.val()[uid]);
-    userDbRef.update({ stacks: bettingRoom[uid] });
+    userDbRef.update({ stacks: stacksLost });
   }
 
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
