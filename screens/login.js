@@ -35,7 +35,7 @@ export default function Login() {
             .ref('Users/')
             .child(response.user.uid)
             .set({
-              uid: response.user.uid,
+              displayName: random_name({ seed: response.user.uid }),
               email: response.user.email,
               stacks: 1000,
             });
@@ -94,9 +94,14 @@ export default function Login() {
         console.log(response);
         let dbVal =
           response &&
-          (await db.database().ref('Users/').child(response.user.uid).set({
-            stacks: 1000,
-          }));
+          (await db
+            .database()
+            .ref('Users/')
+            .child(response.user.uid)
+            .set({
+              displayName: random_name({ seed: response.user.uid }),
+              stacks: 1000,
+            }));
         response.user.updateProfile({
           displayName: random_name({ seed: response.user.uid }),
         });

@@ -26,7 +26,9 @@ export default function WaitingRoom(props) {
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
 
-  let [dbUserObj] = useObjectVal(db.database().ref(`/Users/${uid}`));
+  let [dbUserObj, dbUserObjLoading] = useObjectVal(
+    db.database().ref(`/Users/${uid}`)
+  );
   console.log(dbUserObj);
   let playerStatus = db
     .database()
@@ -82,12 +84,14 @@ export default function WaitingRoom(props) {
     //     .update({ [uid]: 0 });
 
     uid &&
-      db
-        .database()
-        .ref(`/Rooms/${roomName}/playerList/${uid}`)
-        .update({ displayName: user.displayName, status: false });
+      dbUserObj &&
+      db.database().ref(`/Rooms/${roomName}/playerList/${uid}`).update({
+        displayName: user.displayName,
+        status: false,
+        stacks: dbUserObj.stacks,
+      });
     //why are we adding a UID to our UID object on playerList? is this where we'll eventually store player names?
-  }, [uid]);
+  }, [loading, dbUserObjLoading]);
 
   //this copies the gameRules from rules list onto our room object
   useEffect(() => {
