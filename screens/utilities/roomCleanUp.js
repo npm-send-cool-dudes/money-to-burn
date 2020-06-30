@@ -66,13 +66,11 @@ export default function roomCleanUp(
 
     let betArray = Object.values(betTotal);
 
-    let newStacks = 0;
+    let stacksWon = 0;
 
-    betArray.forEach((bet) => (newStacks += bet));
+    betArray.forEach((bet) => (stacksWon += bet));
 
-    console.log('sum', newStacks);
-
-    let winnerStacks = newStacks + userVals.stacks;
+    let winnerStacks = stacksWon + userVals.stacks;
 
     winnerDbRef.update({ stacks: winnerStacks });
   }
