@@ -14,7 +14,8 @@ export default function roomCleanUp(
   navigation,
   roomName,
   uid,
-  playerReference
+  playerReference,
+  winner
 ) {
   async function betResolution(roomName, uid) {
     const userDbRef = db.database().ref(`/Users/${uid}/`);
@@ -45,10 +46,44 @@ export default function roomCleanUp(
     // console.log(bettingRoom.val()[uid]);
     userDbRef.update({ stacks: stacksLost });
   }
+  async function betPayout(roomName, winner) {
+    const winnerDbRef = db.database().ref(`/Users/${winner}/`);
+
+    let userVals;
+    let betTotal;
+    try {
+      await db
+        .database()
+        .ref(`/Users/${uid}/`)
+        .once('value', (user) => console.log(user))
+        .then((ret) => (userVals = ret.val()));
+
+      await db
+        .database()
+        .ref(`/Rooms/${roomName}/Bets`)
+        .once('value', (e) => console.log(e.val()))
+        .then((ret) => (betTotal = ret.val()));
+
+      let betArray = Object.values(betTotal);
+
+      let stacksWon = 0;
+
+      betArray.forEach((bet) => (stacksWon += bet));
+
+      let winnerStacks = stacksWon + userVals.stacks;
+
+      winnerDbRef.update({ stacks: winnerStacks });
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
   let rooms = db.database().ref(`/Rooms/`);
   betResolution(roomName, uid);
+
+  betPayout(roomName, winner);
+
   playerList.update({
     [uid]: null,
   });
