@@ -1,12 +1,7 @@
 import React, { useState, useContext } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Button,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { Button, Input } from 'react-native-elements';
+
 import { UserContext } from '../context/UserContext';
 import random_name from 'node-random-name';
 import { db } from '../firebaseConfig';
@@ -35,7 +30,7 @@ export default function Login() {
             .ref('Users/')
             .child(response.user.uid)
             .set({
-              uid: response.user.uid,
+              displayName: random_name({ seed: response.user.uid }),
               email: response.user.email,
               stacks: 1000,
             });
@@ -94,9 +89,14 @@ export default function Login() {
         console.log(response);
         let dbVal =
           response &&
-          (await db.database().ref('Users/').child(response.user.uid).set({
-            stacks: 1000,
-          }));
+          (await db
+            .database()
+            .ref('Users/')
+            .child(response.user.uid)
+            .set({
+              displayName: random_name({ seed: response.user.uid }),
+              stacks: 1000,
+            }));
         response.user.updateProfile({
           displayName: random_name({ seed: response.user.uid }),
         });
@@ -129,23 +129,86 @@ export default function Login() {
         </View>
       ) : (
         <View>
-          <Text>Login</Text>
-          <TextInput
-            placeholder="email@email.com"
+          <Text style={styles.header}>Login</Text>
+          <Input
+            placeholder="email"
             keyboardType="email-address"
             onChangeText={(email) => setEmail(email)}
-          ></TextInput>
-          <TextInput
-            placeholder="enter password"
+            inputStyle={{ fontFamily: 'shortstack', fontSize: 30}}
+            inputContainerStyle={{width: 300}}
+          ></Input>
+          <Input
+            placeholder="password"
             secureTextEntry
             onChangeText={(password) => setPassword(password)}
-          ></TextInput>
-          <Button onPress={onSignIn} title="Login"></Button>
+            inputStyle={{ fontFamily: 'shortstack', fontSize: 30}}
+            inputContainerStyle={{width: 300}}
+          ></Input>
+          <Button
+            onPress={onSignIn}
+            title="Login"
+            titleStyle={styles.buttonText}
+            buttonStyle={styles.button}
+          ></Button>
           {/* <Button onPress={googleSignIn} title="Sign in with Google"></Button> */}
-          <Button onPress={onSignUp} title="Sign Up"></Button>
-          <Button onPress={noAuthSignIn} title="Anonymous sign in"></Button>
+          <Button
+            onPress={onSignUp}
+            title="Sign Up"
+            titleStyle={styles.buttonText}
+            buttonStyle={styles.button}
+          ></Button>
+          <Button
+            onPress={noAuthSignIn}
+            title="Anonymous sign in"
+            titleStyle={styles.buttonText}
+            buttonStyle={styles.button}
+          ></Button>
         </View>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E5FDFF',
+  },
+  header: {
+    alignContent: 'center',
+    fontSize: 45,
+    color: 'black',
+    fontFamily: 'gamejot',
+  },
+  headerBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 2,
+  },
+  buttonGroup: {
+    flex: 1,
+  },
+  play: {
+    backgroundColor: 'darkblue',
+    borderRadius: 10,
+  },
+  highScores: {
+    backgroundColor: 'darkred',
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 30,
+    color: 'white',
+    fontFamily: 'gamejot',
+  },
+  button: {
+    backgroundColor: 'darkblue',
+    borderRadius: 10,
+  },
+  image: {
+    height: 300,
+    width: 300,
+  },
+});

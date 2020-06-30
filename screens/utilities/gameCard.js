@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     fontFamily: 'gamejot'
   },
   rating: {
-    marginLeft: 85,
+    marginLeft: 70,
     fontSize: 17,
     marginTop: 5,
     fontFamily: 'gamejot'
@@ -115,13 +115,13 @@ const styles = StyleSheet.create({
   playNow: {
     backgroundColor: 'darkblue',
     borderRadius: 10,
-    width: 100,
+    width: 80,
     margin: 2,
   },
   select: {
     borderRadius: 10,
     backgroundColor: 'darkred',
-    width: 100,
+    width: 80,
     margin: 2,
   },
   logo: {

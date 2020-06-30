@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { db } from '../firebaseConfig';
 import PlayerStatus from './utilities/playerStatus';
@@ -9,6 +9,7 @@ import {
 } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Button } from 'react-native-elements';
+import BetTracker from './utilities/BetTracker';
 // import random_name from 'node-random-name';
 
 const QRcode = {
@@ -20,12 +21,15 @@ const QRcode = {
 
 export default function WaitingRoom(props) {
   const [user, loading, error] = useAuthState(db.auth());
-  console.log('user at waitingroom', user);
   let uid = user.uid;
   let navigation = props.navigation;
   let roomName = props.route.params.roomName;
   let { gameName } = props.route.params;
+  const [bet, setBet] = useState(0);
 
+  let [dbUserObj, dbUserObjLoading] = useObjectVal(
+    db.database().ref(`/Users/${uid}`)
+  );
   let playerStatus = db
     .database()
     .ref(`/Rooms/${roomName}/playerList/${uid}/status`);
@@ -35,27 +39,24 @@ export default function WaitingRoom(props) {
   let [players] = useListVals(
     db.database().ref(`/Rooms/${roomName}/playerList/`)
   );
-  // const [players] = useListVals(playerList);
-  //removed useeffect and put in firebase hook
 
   let [roomStatus] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/status`)
   );
-  // const [roomStatus] = useObjectVal(roomStatusData);
 
+  let [bettingRoom] = useObjectVal(
+    db.database().ref(`/Rooms/${roomName}/Bets`)
+  );
   //grabbing nextGame from the DB
   let [nextGame] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/Name`)
   );
-  // const [nextGame] = useObjectVal(nextGameData);
 
   let [gameRules] = useObjectVal(db.database().ref(`/GamesList/${gameName}`));
-  // const [gameRules] = useObjectVal(gameObj);
 
   //seperated navigation from the button click, so that when any user clicks the final ready button it navigates to the game
   if (roomStatus) {
     //for when users join this game, roomName does not exist so users don't automatically navigate to the right game
-    console.log(roomName);
     navigation.navigate(nextGame, { roomName: roomName });
   }
 
@@ -65,12 +66,22 @@ export default function WaitingRoom(props) {
     })
     .includes(false);
 
+  // useEffect(() => {
+  //   db.database()
+  //     .ref(`/Rooms/${roomName}/Bets`)
+  //     .set({ [uid]: bet });
+  // }, [players]);
+
   useEffect(() => {
     //added another line to the useffect to give the room a false statement
     db.database().ref(`/Rooms/${roomName}`).update({ status: false });
     //if you join the room, you don't have access to the gameName prop, so i set this up so when the first user creates the game, it gets pushed to the room. This is where all clients can access the next game for now. THis will be updates as we move the actual game rules onto the room object
     gameName &&
       db.database().ref(`/Rooms/${roomName}/Game`).update({ Name: gameName });
+
+    db.database()
+      .ref(`/Rooms/${roomName}/Bets`)
+      .update({ [uid]: bet });
 
     //TODO i added the scoreboard functionality on here. I decided to undo it as it does make more sense to add the scores based on the game. What if snake doesn't use scores? it is here though in case somebody decided to go that route.
     // uid &&
@@ -80,12 +91,14 @@ export default function WaitingRoom(props) {
     //     .update({ [uid]: 0 });
 
     uid &&
-      db
-        .database()
-        .ref(`/Rooms/${roomName}/playerList/${uid}`)
-        .update({ displayName: user.displayName, status: false });
+      dbUserObj &&
+      db.database().ref(`/Rooms/${roomName}/playerList/${uid}`).update({
+        displayName: dbUserObj.displayName,
+        status: false,
+        stacks: dbUserObj.stacks,
+      });
     //why are we adding a UID to our UID object on playerList? is this where we'll eventually store player names?
-  }, [uid]);
+  }, [loading, dbUserObjLoading]);
 
   //this copies the gameRules from rules list onto our room object
   useEffect(() => {
@@ -116,15 +129,15 @@ export default function WaitingRoom(props) {
         backgroundColor: '#E5FDFF',
       }}
     >
-      <Image source={QRcode} style={styles.logo} />
+      <BetTracker roomName={roomName} bet={bet} setBet={setBet}></BetTracker>
+      {/* <Image source={QRcode} style={styles.logo} /> */}
 
-      <Text style={styles.room}>{roomName}</Text>
+      <Text style={styles.room}>Room Number: {roomName}</Text>
       {loading && <Text> loading players... </Text>}
 
       <View style={{ margin: 10 }}>
         {players &&
           players.map((player) => {
-            console.log(player);
             return (
               <PlayerStatus
                 key={player.uid}
@@ -134,7 +147,9 @@ export default function WaitingRoom(props) {
             );
           })}
       </View>
-      {uid && <Text style={styles.user}>you: {user.displayName} </Text>}
+      {uid && dbUserObj && (
+        <Text style={styles.user}>stacks: {dbUserObj.stacks} </Text>
+      )}
       <Button
         title="Ready!"
         buttonStyle={styles.ready}
@@ -155,7 +170,7 @@ export default function WaitingRoom(props) {
 
 const styles = StyleSheet.create({
   logo: {
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   room: {
     fontSize: 30,

@@ -71,7 +71,7 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate('JoinRoom')}
         />
         <Button
-          title="AccountOptions"
+          title="Account Options"
           titleStyle={styles.buttonText}
           buttonStyle={styles.highScores}
           onPress={() => navigation.navigate('AccountOptions')}

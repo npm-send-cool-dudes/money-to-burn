@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 // game based off tutorial from https://pusher.com/tutorials/game-device-sensors-react-native#prerequisites
 
 import React, { useState, useEffect } from 'react';
@@ -122,36 +123,36 @@ const _getEntities = () => {
   return entities;
 };
 
-const _setupCollisionHandler = (roomName, uid) => {
-  Matter.Events.on(engine, 'collisionStart', (event) => {
-    var pairs = event.pairs;
+// const _setupCollisionHandler = (roomName, uid) => {
+//   Matter.Events.on(engine, 'collisionStart', (event) => {
+//     var pairs = event.pairs;
 
-    var objA = pairs[0].bodyA.label;
-    var objB = pairs[0].bodyB.label;
+//     var objA = pairs[0].bodyA.label;
+//     var objB = pairs[0].bodyB.label;
 
-    //if player dodged object, set new position of block at top
-    if (objA === 'floor' && objB === 'debris') {
-      Matter.Body.setPosition(pairs[0].bodyB, {
-        x: randomInt(1, width - 30),
-        y: randomInt(0, 200),
-      });
+//     //if player dodged object, set new position of block at top
+//     if (objA === 'floor' && objB === 'debris') {
+//       Matter.Body.setPosition(pairs[0].bodyB, {
+//         x: randomInt(1, width - 30),
+//         y: randomInt(0, 200),
+//       });
 
-      const currentScoreRef = db
-        .database()
-        .ref(`/Rooms/${roomName}/Game/Scores/${uid}`);
-      currentScoreRef.transaction((currentScore = 0) => {
-        return currentScore + 1;
-      });
-    }
+//       const currentScoreRef = db
+//         .database()
+//         .ref(`/Rooms/${roomName}/Game/Scores/${uid}/score`);
+//       currentScoreRef.transaction((currentScore = 0) => {
+//         return currentScore + 1;
+//       });
+//     }
 
-    //if player get hits by debris
-    if (objA === 'ball' && objB === 'debris') {
-      db.database()
-        .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
-        .update({ [uid]: false });
-    }
-  });
-};
+//     //if player get hits by debris
+//     if (objA === 'ball' && objB === 'debris') {
+//       db.database()
+//         .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+//         .update({ [uid]: false });
+//     }
+//   });
+// };
 
 //reset position and velocity of all blocks
 const reset = () => {
@@ -198,17 +199,47 @@ export default function App(props) {
   const [aliveStatusPlayer] = useObjectVal(
     db.database().ref(`/Rooms/${roomName}/Game/AliveStatus/${uid}`)
   );
+  const _setupCollisionHandler = () => {
+    Matter.Events.on(engine, 'collisionStart', (event) => {
+      var pairs = event.pairs;
+
+      var objA = pairs[0].bodyA.label;
+      var objB = pairs[0].bodyB.label;
+
+      //if player dodged object, set new position of block at top
+      if (objA === 'floor' && objB === 'debris') {
+        Matter.Body.setPosition(pairs[0].bodyB, {
+          x: randomInt(1, width - 30),
+          y: randomInt(0, 200),
+        });
+        console.log('roomName', roomName);
+        const currentScoreRef = db
+          .database()
+          .ref(`/Rooms/${roomName}/Game/Scores/${uid}/score`);
+        currentScoreRef.transaction((currentScore = 0) => {
+          return currentScore + 1;
+        });
+      }
+
+      //if player get hits by debris
+      if (objA === 'ball' && objB === 'debris') {
+        db.database()
+          .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
+          .update({ [uid]: false });
+      }
+    });
+  };
 
   //set inital scoring for person, set starting aliveStatus, and subscribe to accelerometer lateral motion
   useEffect(() => {
     db.database()
-      .ref(`/Rooms/${roomName}/Game/Scores/`)
-      .update({ [uid]: 0 });
+      .ref(`/Rooms/${roomName}/Game/Scores/${uid}`)
+      .update({ score: 0, displayName: user.displayName });
     db.database()
       .ref(`/Rooms/${roomName}/Game/AliveStatus/`)
       .update({ [uid]: true });
     _toggle();
-    _setupCollisionHandler(roomName, uid);
+    _setupCollisionHandler();
   }, []);
 
   const _toggle = () => {
@@ -234,12 +265,12 @@ export default function App(props) {
   };
 
   //win conditions are either first to a set score or highest score(s) if all are dead
-  const pointsToWin = 30;
+  const pointsToWin = 20;
 
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey] >= pointsToWin) {
+        if (allScores[userKey].score >= pointsToWin) {
           setWinner([userKey]);
         }
       });
@@ -248,20 +279,22 @@ export default function App(props) {
   useEffect(() => {
     if (aliveStatusRoom && !Object.values(aliveStatusRoom).includes(true)) {
       const scores = Object.entries(allScores);
+      console.log('scores', scores);
       let winnersAndScores = [];
       scores.forEach((player, index) => {
         if (index === 0) {
           winnersAndScores.push(player);
         } else {
-          if (player[1] > winnersAndScores[0][1]) {
+          if (player[1].score > winnersAndScores[0][1].score) {
             winnersAndScores = [player];
-          } else if (player[1] === winnersAndScores[0][1]) {
+          } else if (player[1].score === winnersAndScores[0][1].score) {
             winnersAndScores.push(player);
           }
         }
       });
       const winners = winnersAndScores.map((p) => p[0]);
-
+      console.log('winners', winners);
+      console.log('winnersandscores', winnersAndScores);
       setWinner(winners);
     }
   }, [aliveStatusRoom]);
@@ -335,7 +368,7 @@ export default function App(props) {
             Object.keys(allScores).map((userKey) => {
               return (
                 <Text key={userKey} style={styles.text}>
-                  {random_name({ seed: userKey })}: {allScores[userKey]}
+                  {allScores[userKey].displayName}: {allScores[userKey].score}
                 </Text>
               );
             })}
@@ -358,12 +391,15 @@ export default function App(props) {
       {winner && (
         <Text style={styles.winner}>
           Winner(s):
-          {winner.map((player) => (
-            <Text key={player} style={styles.winner}>
-              {'\n'}
-              {random_name({ seed: player })}
-            </Text>
-          ))}
+          {winner.map((player) => {
+            // console.log('winner map player', player, winner);
+            return (
+              <Text key={player} style={styles.winner}>
+                {'\n'}
+                {allScores && allScores[player].displayName}
+              </Text>
+            );
+          })}
         </Text>
       )}
       {winner && (
@@ -381,7 +417,7 @@ export default function App(props) {
             Object.keys(allScores).map((userKey) => {
               return (
                 <Text key={userKey} style={styles.text}>
-                  {random_name({ seed: userKey })}: {allScores[userKey]}
+                  {allScores[userKey].displayName}: {allScores[userKey].score}
                 </Text>
               );
             })}

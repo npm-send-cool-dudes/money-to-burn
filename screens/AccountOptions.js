@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Button, Input } from 'react-native-elements';
+
 import { db } from '../firebaseConfig';
+import { useObjectVal } from 'react-firebase-hooks/database';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { UserContext } from '../context/UserContext';
 //this screen will be to update account settings like displayName and to show current stacks available
@@ -8,23 +11,33 @@ const AccountOptions = ({ navigation }) => {
   const [user, loading, error] = useAuthState(db.auth());
   const context = useContext(UserContext);
   const [name, setName] = useState('');
-
-  const updateName = (value) => {
+  let [dbUserObj, dbUserObjLoading] = useObjectVal(
+    db.database().ref(`/Users/${user.uid}`)
+  );
+  const updateName = async (value) => {
     user.updateProfile({ displayName: value });
+    (await !loading) &&
+      db
+        .database()
+        .ref(`/Users`)
+        .child(user.uid)
+        .update({ displayName: value });
   };
 
   return (
-    <View>
-      <TextInput
+    <View style={styles.background}>
+      <Input
         placeholder="new name!"
         onChangeText={(name) => setName(name)}
-      ></TextInput>
+        inputStyle={{ fontFamily: 'shortstack', fontSize: 30}}
+        inputContainerStyle={{alignSelf: 'center', width: 300}}
+      ></Input>
 
       <Button
         title="Update Name!"
         titleStyle={styles.buttonText}
         buttonStyle={styles.highScores}
-        onPress={updateName(name)}
+        onPress={() => updateName(name)}
       />
       <Button
         title="Logout"
