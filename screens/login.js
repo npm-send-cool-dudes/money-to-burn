@@ -135,14 +135,14 @@ export default function Login() {
             keyboardType="email-address"
             onChangeText={(email) => setEmail(email)}
             inputStyle={{ fontFamily: 'shortstack', fontSize: 30}}
-            inputContainerStyle={{width: 150}}
+            inputContainerStyle={{width: 300}}
           ></Input>
           <Input
             placeholder="password"
             secureTextEntry
             onChangeText={(password) => setPassword(password)}
             inputStyle={{ fontFamily: 'shortstack', fontSize: 30}}
-            inputContainerStyle={{width: 150}}
+            inputContainerStyle={{width: 300}}
           ></Input>
           <Button
             onPress={onSignIn}

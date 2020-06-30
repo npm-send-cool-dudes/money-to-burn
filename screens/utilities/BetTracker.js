@@ -25,7 +25,7 @@ const BetTracker = ({ roomName, bet, setBet }) => {
   }
 
   return (
-    <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
+    <View style={{alignContent: 'center', justifyContent: 'center', marginBottom: 30}}>
       <Text
         style={{
           fontSize: 30,

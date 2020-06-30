@@ -30,7 +30,7 @@ const AccountOptions = ({ navigation }) => {
         placeholder="new name!"
         onChangeText={(name) => setName(name)}
         inputStyle={{ fontFamily: 'shortstack', fontSize: 30}}
-        inputContainerStyle={{alignSelf: 'center', width: 200}}
+        inputContainerStyle={{alignSelf: 'center', width: 300}}
       ></Input>
 
       <Button
