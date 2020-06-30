@@ -41,7 +41,7 @@ export default function ClikBait(props) {
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey].score >= 10) {
+        if (allScores[userKey].score >= 1) {
           setWinner(userKey);
         }
       });
@@ -119,7 +119,9 @@ export default function ClikBait(props) {
             buttonStyle={styles.home}
             titleStyle={styles.buttonText}
             title="Home"
-            onPress={() => roomCleanUp(navigation, roomName, uid, playerList)}
+            onPress={() =>
+              roomCleanUp(navigation, roomName, uid, playerList, winner)
+            }
           />
         </View>
       )}
