@@ -111,7 +111,9 @@ export default function ClikBait(props) {
           {winner === uid ? (
             <Text style={styles.player}>You Win!</Text>
           ) : (
-            <Text style={styles.player}>{winner.displayName} Wins!</Text>
+            <Text style={styles.player}>
+              {allScores[winner].displayName} Wins!
+            </Text>
           )}
           <Button
             buttonStyle={styles.home}
