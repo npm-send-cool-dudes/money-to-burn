@@ -51,28 +51,31 @@ export default function roomCleanUp(
 
     let userVals;
     let betTotal;
+    try {
+      await db
+        .database()
+        .ref(`/Users/${uid}/`)
+        .once('value', (user) => console.log(user))
+        .then((ret) => (userVals = ret.val()));
 
-    await db
-      .database()
-      .ref(`/Users/${uid}/`)
-      .once('value', (user) => console.log(user))
-      .then((ret) => (userVals = ret.val()));
+      await db
+        .database()
+        .ref(`/Rooms/${roomName}/Bets`)
+        .once('value', (e) => console.log(e.val()))
+        .then((ret) => (betTotal = ret.val()));
 
-    await db
-      .database()
-      .ref(`/Rooms/${roomName}/Bets`)
-      .once('value', (e) => console.log(e.val()))
-      .then((ret) => (betTotal = ret.val()));
+      let betArray = Object.values(betTotal);
 
-    let betArray = Object.values(betTotal);
+      let stacksWon = 0;
 
-    let stacksWon = 0;
+      betArray.forEach((bet) => (stacksWon += bet));
 
-    betArray.forEach((bet) => (stacksWon += bet));
+      let winnerStacks = stacksWon + userVals.stacks;
 
-    let winnerStacks = stacksWon + userVals.stacks;
-
-    winnerDbRef.update({ stacks: winnerStacks });
+      winnerDbRef.update({ stacks: winnerStacks });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   let playerList = db.database().ref(`/Rooms/${roomName}/playerList/`);
