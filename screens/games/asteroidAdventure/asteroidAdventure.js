@@ -265,7 +265,7 @@ export default function App(props) {
   };
 
   //win conditions are either first to a set score or highest score(s) if all are dead
-  const pointsToWin = 30;
+  const pointsToWin = 20;
 
   useEffect(() => {
     allScores &&

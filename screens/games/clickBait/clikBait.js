@@ -41,7 +41,7 @@ export default function ClikBait(props) {
   useEffect(() => {
     allScores &&
       Object.keys(allScores).map((userKey) => {
-        if (allScores[userKey].score >= 1) {
+        if (allScores[userKey].score >= 10) {
           setWinner(userKey);
         }
       });
