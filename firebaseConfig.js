@@ -19,7 +19,7 @@ import 'firebase/database';
 // };
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDzCCPQjPzALATf_YOCXSpporWLGPX6OgA',
+  apiKey: 'fakeapikey',
   authDomain: 'money-to-burn.firebaseapp.com',
   databaseURL: 'https://money-to-burn.firebaseio.com',
   projectId: 'money-to-burn',
